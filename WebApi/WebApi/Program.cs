@@ -1,11 +1,18 @@
 using Microsoft.EntityFrameworkCore;
 using WebApi.DAL;
+using WebApi.DAL.Interfaces;
+using WebApi.DAL.Repositories;
+using WebApi.Domain.Entity;
+using WebApi.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IRepository<User>, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {

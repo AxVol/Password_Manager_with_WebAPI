@@ -12,7 +12,7 @@ namespace WebApi.Controllers
 
         [Route("GetUserPass/{SecretToken}")]
         [HttpGet]
-        public async Task<IActionResult> Get(string secretToken)
+        public async Task<IActionResult> GetAll(string secretToken)
         {
             throw new NotImplementedException();
         }

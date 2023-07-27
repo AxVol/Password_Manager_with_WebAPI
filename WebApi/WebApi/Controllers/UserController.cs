@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Domain.ViewModels.User;
+using WebApi.Service;
 
 namespace WebApi.Controllers
 {
@@ -8,11 +9,16 @@ namespace WebApi.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        public UserController() { }
+        private readonly IUserService userService;
+
+        public UserController(IUserService service) 
+        {
+            userService = service;
+        }
 
         [Route("Authentication")]
         [HttpPost]
-        public async Task<IActionResult> Auth(LoginViewModel model) 
+        public async Task<IActionResult> Authentication(LoginViewModel model) 
         {
             throw new NotImplementedException();
         }
@@ -20,8 +26,15 @@ namespace WebApi.Controllers
         [Route("Register")]
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
-        {
-            throw new NotImplementedException();
+        { 
+            var response = await userService.Register(model);
+
+            if (response.Status == Domain.Enum.RequestStatus.Success)
+            {
+                return new JsonResult(response.Value);
+            }
+            
+            return new JsonResult(response.Description);
         }
 
         [Route("UpdateToken")]
