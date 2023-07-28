@@ -4,6 +4,8 @@ using WebApi.DAL.Interfaces;
 using WebApi.Domain.Entity;
 using WebApi.Domain.Response;
 using WebApi.Domain.ViewModels.User;
+using WebApi.Service.Implementations;
+using WebApi.Service.Interfaces;
 
 namespace WebApi.Service
 {
@@ -11,22 +13,51 @@ namespace WebApi.Service
     {
         private readonly IRepository<User> repository;
         private readonly ILogger<UserService> logger;
+        private readonly ICryptography cryptography;
 
         public UserService(IRepository<User> rep, ILogger<UserService> log)
         {
             repository = rep;
             logger = log;
+            cryptography = new Cryptography();
         }
 
-        public Task<IResponse<User>> Login(LoginViewModel model)
+        public async Task<IResponse<User>> Login(LoginViewModel model)
         {
-            throw new NotImplementedException();
+            IResponse<User> response = new Response<User>()
+            {
+                Description = "Неверен логин или пароль",
+                Status = Domain.Enum.RequestStatus.Failed,
+                Value = null
+            };
+
+            string passwordHash = cryptography.GetPasswordHash(model.Password);
+            IEnumerable<User> users = repository.GetAll();
+            User? user = users.FirstOrDefault(u => u.Email == model.Login || u.Login == model.Login);
+
+            if (user == null)
+            {
+                return response;
+            }
+            else
+            {
+                if (passwordHash != user.Password)
+                    return response;
+            }
+
+            return new Response<User>()
+            {
+                Description = "Успех",
+                Status = Domain.Enum.RequestStatus.Success,
+                Value = user
+            };
         }
 
         public async Task<IResponse<User>> Register(RegisterViewModel model)
         {
             try
             {
+                string hashPassword = cryptography.GetPasswordHash(model.Password);
                 IEnumerable<User> users = repository.GetAll();
                 User? user = users.FirstOrDefault(u => u.Email == model.Email || u.Login == model.Login);
 
@@ -44,7 +75,7 @@ namespace WebApi.Service
                 {
                     Login = model.Login,
                     Email = model.Email,
-                    Password = model.Password,
+                    Password = hashPassword,
                     SecretToken = Convert.ToBase64String(Encoding.UTF8.GetBytes(Guid.NewGuid().ToString()))
                 };
 

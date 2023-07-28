@@ -20,7 +20,14 @@ namespace WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Authentication(LoginViewModel model) 
         {
-            throw new NotImplementedException();
+            var response = await userService.Login(model);
+
+            if (response.Status == Domain.Enum.RequestStatus.Success)
+            {
+                return new JsonResult(response.Value);
+            }
+
+            return new JsonResult(response.Description);
         }
 
         [Route("Register")]
