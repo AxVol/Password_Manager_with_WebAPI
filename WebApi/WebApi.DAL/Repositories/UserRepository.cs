@@ -31,7 +31,7 @@ namespace WebApi.DAL.Repositories
             return context.Users;
         }
 
-        public async void Update(User entity)
+        public async Task Update(User entity)
         {
             context.Users.Update(entity);
             await context.SaveChangesAsync();

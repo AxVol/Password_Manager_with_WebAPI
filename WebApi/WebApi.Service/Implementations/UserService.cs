@@ -100,9 +100,36 @@ namespace WebApi.Service
             }
         }
 
-        public Task<IResponse<string>> UpdateToken(string token)
+        public async Task<IResponse<string>> UpdateToken(string token)
         {
-            throw new NotImplementedException();
+            string newToken = Convert.ToBase64String(Encoding.UTF8.GetBytes(Guid.NewGuid().ToString()));
+
+            try
+            {
+                IEnumerable<User> users = repository.GetAll();
+                User user = users.First(u => u.SecretToken == token);
+
+                user.SecretToken = newToken;
+                await repository.Update(user);
+
+                return new Response<string>()
+                {
+                    Description = "Токен успешно обновлен",
+                    Status = Domain.Enum.RequestStatus.Success,
+                    Value = newToken
+                };
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+
+                return new Response<string>()
+                {
+                    Description = "Непредвиденная ошибка",
+                    Status = Domain.Enum.RequestStatus.Failed
+                };
+            }
+            
         }
     }
 }

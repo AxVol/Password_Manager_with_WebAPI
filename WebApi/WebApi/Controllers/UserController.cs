@@ -48,7 +48,9 @@ namespace WebApi.Controllers
         [HttpPut]
         public async Task<IActionResult> Update(string secretToken)
         {
-            throw new NotImplementedException();
+            var response = await userService.UpdateToken(secretToken);
+
+            return new JsonResult(response);
         }
     }
 }
