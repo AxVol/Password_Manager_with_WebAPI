@@ -41,14 +41,12 @@ namespace WebApi.Service.Implementations
 
                 password.PassWord = model.Password;
 
-                IResponse<Password> response = new Response<Password>()
+                return new Response<Password>()
                 {
                     Description = "Пароль успешно добавлен",
                     Status = Domain.Enum.RequestStatus.Success,
                     Value = password
                 };
-
-                return response;
             }
             catch (Exception ex)
             {
@@ -62,21 +60,86 @@ namespace WebApi.Service.Implementations
             }
         }
 
-        public Task<IResponse<Password>> Delete(PasswordViewModel model)
+        public async Task<IResponse<Password>> Delete(PasswordViewModel model)
         {
-            Password password = passwordRepository.
+            Password? password = passwordRepository.GetAll().FirstOrDefault(p => p.Id == model.Id);
 
-            passwordRepository.Delete(password);
+            if (password == null)
+            {
+                return new Response<Password>()
+                {
+                    Description = "Попытка удалить несуществующий пароль",
+                    Status = Domain.Enum.RequestStatus.Failed
+                };
+            }
+
+            await passwordRepository.Delete(password);
+
+            return new Response<Password>()
+            {
+                Description = "Пароль успешно удален",
+                Status = Domain.Enum.RequestStatus.Success
+            };
         }
 
-        public Task<IResponse<Password>> GetAll()
+        public async Task<IResponse<Password>> GetAll(PasswordViewModel model)
         {
-            throw new NotImplementedException();
+            try
+            {
+                IEnumerable<Password> passwords = passwordRepository.GetAll().
+                Where(p => p.User.SecretToken == model.SecretToken);
+
+                foreach (Password password in passwords)
+                {
+                    string decryptPassword = cryptography.DecryptPassword(password.PassWord);
+                    password.PassWord = decryptPassword;
+                }
+
+                return new Response<Password>()
+                {
+                    Status = Domain.Enum.RequestStatus.Success,
+                    Values = passwords
+                };
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message);
+
+                return new Response<Password>()
+                {
+                    Description = "Не предвиденная ошибка",
+                    Status = Domain.Enum.RequestStatus.Failed
+                };
+            }
         }
 
-        public Task<IResponse<Password>> Update(PasswordViewModel model)
+        public async Task<IResponse<Password>> Update(PasswordViewModel model)
         {
-            throw new NotImplementedException();
+            Password? password = passwordRepository.GetAll().FirstOrDefault(p => p.Id == model.Id);
+
+            if (password == null)
+            {
+                return new Response<Password>()
+                {
+                    Description = "Попытка изменить несуществующий пароль",
+                    Status = Domain.Enum.RequestStatus.Failed
+                };
+            }
+
+            string cypherPass = cryptography.EncryptPassword(model.Password);
+            password.PassWord = cypherPass;
+            password.PassService = model.Service;
+
+            await passwordRepository.Update(password);
+
+            password.PassWord = model.Password;
+
+            return new Response<Password>()
+            {
+                Description = "Пароль успешно изменен",
+                Status = Domain.Enum.RequestStatus.Success,
+                Value = password
+            };
         }
     }
 }

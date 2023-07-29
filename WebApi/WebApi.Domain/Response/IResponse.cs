@@ -7,5 +7,6 @@ namespace WebApi.Domain.Response
         string Description { get;}
         RequestStatus Status { get;}
         T? Value { get;}
+        IEnumerable<T> Values { get;}
     }
 }

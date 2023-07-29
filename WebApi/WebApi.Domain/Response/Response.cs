@@ -9,5 +9,6 @@ namespace WebApi.Domain.Response
         public RequestStatus Status { get; set; }
 
         public T? Value { get; set; }
+        public IEnumerable<T> Values { get; set; }
     }
 }

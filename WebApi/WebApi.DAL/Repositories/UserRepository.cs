@@ -26,11 +26,6 @@ namespace WebApi.DAL.Repositories
             await context.SaveChangesAsync();
         }
 
-        public User Get(User entity)
-        {
-            throw new NotImplementedException();
-        }
-
         public IEnumerable<User> GetAll()
         {
             return context.Users;

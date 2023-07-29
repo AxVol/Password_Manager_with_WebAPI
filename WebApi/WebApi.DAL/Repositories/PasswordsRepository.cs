@@ -1,4 +1,5 @@
-﻿using WebApi.DAL.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using WebApi.DAL.Interfaces;
 using WebApi.Domain.Entity;
 
 namespace WebApi.DAL.Repositories
@@ -26,7 +27,7 @@ namespace WebApi.DAL.Repositories
 
         public IEnumerable<Password> GetAll()
         {
-            return context.Passwords;
+            return context.Passwords.Include(p => p.User);
         }
 
         public async Task Update(Password entity)

@@ -20,28 +20,56 @@ namespace WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll(string secretToken)
         {
-            throw new NotImplementedException();
+            PasswordViewModel model = new PasswordViewModel()
+            {
+                SecretToken = secretToken
+            };
+
+            var response = await passwordService.GetAll(model);
+
+            if (response.Status == Domain.Enum.RequestStatus.Failed)
+            {
+                return new JsonResult(response.Description);
+            }
+
+            return new JsonResult(response.Value);
         }
 
         [Route("CreatePass")]
         [HttpPost]
         public async Task<IActionResult> Create(PasswordViewModel model)
         {
-            await passwordService.Create(model);
+            var response = await passwordService.Create(model);
+
+            if (response.Status == Domain.Enum.RequestStatus.Failed)
+            {
+                return new JsonResult(response.Description);
+            }
+
+            return new JsonResult(response.Value);
         }
 
         [Route("UpdatePass")]
         [HttpPut]
         public async Task<IActionResult> Update(PasswordViewModel model)
         {
-            throw new NotImplementedException();
+            var response = await passwordService.Update(model);
+
+            if (response.Status == Domain.Enum.RequestStatus.Failed)
+            {
+                return new JsonResult(response.Description);
+            }
+
+            return new JsonResult(response.Value);
         }
 
         [Route("DeletePass")]
         [HttpDelete]
         public async Task<IActionResult> Delete(PasswordViewModel model)
         {
-            throw new NotImplementedException();
+            var response = await passwordService.Delete(model);
+
+            return new JsonResult(response.Description);
         }
     }
 }

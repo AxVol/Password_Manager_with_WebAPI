@@ -11,7 +11,6 @@ namespace WebApi.DAL.Interfaces
         Task Create(T entity);
         Task Update(T entity);
         Task Delete(T entity);
-        T Get(T entity);
         IEnumerable<T> GetAll();
     }
 }
