@@ -3,6 +3,7 @@
     public interface ICryptography
     {
         string GetPasswordHash(string password);
-        string CypherPassword(string password);
+        string EncryptPassword(string password);
+        string DecryptPassword(string cryptedPassword);
     }
 }

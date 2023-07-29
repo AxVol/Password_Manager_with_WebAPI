@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Domain.ViewModels.Password;
+using WebApi.Service.Interfaces;
 
 namespace WebApi.Controllers
 {
@@ -8,7 +9,12 @@ namespace WebApi.Controllers
     [ApiController]
     public class PasswordsController : ControllerBase
     {
-        public PasswordsController() { }
+        private readonly IPasswordService passwordService;
+
+        public PasswordsController(IPasswordService service) 
+        {
+            passwordService = service;
+        }
 
         [Route("GetUserPass/{SecretToken}")]
         [HttpGet]
@@ -21,7 +27,7 @@ namespace WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(PasswordViewModel model)
         {
-            throw new NotImplementedException();
+            await passwordService.Create(model);
         }
 
         [Route("UpdatePass")]

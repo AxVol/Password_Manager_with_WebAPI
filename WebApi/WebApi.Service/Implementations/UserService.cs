@@ -15,16 +15,16 @@ namespace WebApi.Service
         private readonly ILogger<UserService> logger;
         private readonly ICryptography cryptography;
 
-        public UserService(IRepository<User> rep, ILogger<UserService> log)
+        public UserService(IRepository<User> rep, ILogger<UserService> log, ICryptography crypt)
         {
             repository = rep;
             logger = log;
-            cryptography = new Cryptography();
+            cryptography = crypt;
         }
 
         public async Task<IResponse<User>> Login(LoginViewModel model)
         {
-            IResponse<User> response = new Response<User>()
+            IResponse<User> failedResponse = new Response<User>()
             {
                 Description = "Неверен логин или пароль",
                 Status = Domain.Enum.RequestStatus.Failed,
@@ -37,12 +37,12 @@ namespace WebApi.Service
 
             if (user == null)
             {
-                return response;
+                return failedResponse;
             }
             else
             {
                 if (passwordHash != user.Password)
-                    return response;
+                    return failedResponse;
             }
 
             return new Response<User>()
@@ -67,7 +67,7 @@ namespace WebApi.Service
                     {
                         Description = "Такой пользователь уже существует",
                         Status = Domain.Enum.RequestStatus.Exists,
-                        Value = user
+                        Value = null
                     };
                 }
 
