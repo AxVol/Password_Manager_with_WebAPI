@@ -1,5 +1,4 @@
-﻿using System.Security;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 using WebApi.Service.Interfaces;
 

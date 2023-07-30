@@ -4,7 +4,6 @@ using WebApi.DAL.Interfaces;
 using WebApi.Domain.Entity;
 using WebApi.Domain.Response;
 using WebApi.Domain.ViewModels.User;
-using WebApi.Service.Implementations;
 using WebApi.Service.Interfaces;
 
 namespace WebApi.Service
@@ -32,17 +31,16 @@ namespace WebApi.Service
             };
 
             string passwordHash = cryptography.GetPasswordHash(model.Password);
-            IEnumerable<User> users = repository.GetAll();
-            User? user = users.FirstOrDefault(u => u.Email == model.Login || u.Login == model.Login);
+            User? user = repository.GetAll().FirstOrDefault(
+                u => u.Email == model.Login || u.Login == model.Login);
 
             if (user == null)
             {
                 return failedResponse;
             }
-            else
+            else if (passwordHash != user.Password)
             {
-                if (passwordHash != user.Password)
-                    return failedResponse;
+                return failedResponse;
             }
 
             return new Response<User>()
@@ -58,8 +56,8 @@ namespace WebApi.Service
             try
             {
                 string hashPassword = cryptography.GetPasswordHash(model.Password);
-                IEnumerable<User> users = repository.GetAll();
-                User? user = users.FirstOrDefault(u => u.Email == model.Email || u.Login == model.Login);
+                User? user = repository.GetAll().FirstOrDefault(
+                    u => u.Email == model.Email || u.Login == model.Login);
 
                 if (user != null)
                 {
@@ -106,8 +104,7 @@ namespace WebApi.Service
 
             try
             {
-                IEnumerable<User> users = repository.GetAll();
-                User user = users.First(u => u.SecretToken == token);
+                User user = repository.GetAll().First(u => u.SecretToken == token);
 
                 user.SecretToken = newToken;
                 await repository.Update(user);

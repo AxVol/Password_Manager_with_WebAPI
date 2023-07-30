@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Collections;
-using WebApi.DAL.Interfaces;
+﻿using WebApi.DAL.Interfaces;
 using WebApi.Domain.Entity;
 
 namespace WebApi.DAL.Repositories
