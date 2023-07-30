@@ -87,12 +87,21 @@ namespace WebApi.Service.Implementations
             try
             {
                 IEnumerable<Password> passwords = passwordRepository.GetAll().
-                Where(p => p.User.SecretToken == model.SecretToken);
+                    Where(p => p.User.SecretToken == model.SecretToken);
+
+                if (passwords.Count() == 0)
+                {
+                    return new Response<Password>()
+                    {
+                        Description = "Пользователь не найден",
+                        Status = Domain.Enum.RequestStatus.Failed
+                    };
+                }
 
                 foreach (Password password in passwords)
                 {
-                    string decryptPassword = cryptography.DecryptPassword(password.PassWord);
-                    password.PassWord = decryptPassword;
+                    string pass = cryptography.DecryptPassword(password.PassWord);
+                    password.PassWord = pass;
                 }
 
                 return new Response<Password>()

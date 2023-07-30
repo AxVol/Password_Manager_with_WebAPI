@@ -16,7 +16,7 @@ namespace WebApi.Controllers
             passwordService = service;
         }
 
-        [Route("GetUserPass/{SecretToken}")]
+        [Route("GetUserPass/")]
         [HttpGet]
         public async Task<IActionResult> GetAll(string secretToken)
         {
@@ -32,7 +32,7 @@ namespace WebApi.Controllers
                 return new JsonResult(response.Description);
             }
 
-            return new JsonResult(response.Value);
+            return new JsonResult(response.Values);
         }
 
         [Route("CreatePass")]
