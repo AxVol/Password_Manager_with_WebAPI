@@ -34,5 +34,20 @@ namespace WebApi.Tests
             // Assert
             Assert.Equal(passwordCheck, password);
         }
+
+        [Fact]
+        public void EncryptFailTest()
+        {
+            // Arrage
+            Cryptography cryptography = new Cryptography();
+            string password = "sadasd";
+            string encryptEqual = "t6vFBOOHTK5hqlyL+a0tlw==";
+
+            // Act
+            string encrypt = cryptography.EncryptPassword(password);
+
+            // Assert
+            Assert.False(encryptEqual == encrypt);
+        }
     }
 }

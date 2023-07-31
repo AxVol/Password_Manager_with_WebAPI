@@ -62,7 +62,8 @@ namespace WebApi.Service.Implementations
 
         public async Task<IResponse<Password>> Delete(PasswordViewModel model)
         {
-            Password? password = passwordRepository.GetAll().FirstOrDefault(p => p.Id == model.Id);
+            Password? password = passwordRepository.GetAll().
+                FirstOrDefault(p => p.Id == model.Id && p.User.SecretToken == model.SecretToken);
 
             if (password == null)
             {
@@ -89,19 +90,19 @@ namespace WebApi.Service.Implementations
                 IEnumerable<Password> passwords = passwordRepository.GetAll().
                     Where(p => p.User.SecretToken == model.SecretToken);
 
-                if (passwords.Count() == 0)
+                if (!passwords.Any())
                 {
                     return new Response<Password>()
                     {
-                        Description = "Пользователь не найден",
+                        Description = "Пользователь не найден или у него нету паролей",
                         Status = Domain.Enum.RequestStatus.Failed
                     };
                 }
 
                 foreach (Password password in passwords)
                 {
-                    string pass = cryptography.DecryptPassword(password.PassWord);
-                    password.PassWord = pass;
+                    //string pass = cryptography.DecryptPassword(password.PassWord);
+                    password.PassWord = "123";
                 }
 
                 return new Response<Password>()
@@ -124,7 +125,8 @@ namespace WebApi.Service.Implementations
 
         public async Task<IResponse<Password>> Update(PasswordViewModel model)
         {
-            Password? password = passwordRepository.GetAll().FirstOrDefault(p => p.Id == model.Id);
+            Password? password = passwordRepository.GetAll().
+                FirstOrDefault(p => p.Id == model.Id && p.User.SecretToken == model.SecretToken);
 
             if (password == null)
             {
