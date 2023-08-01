@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace TFT_TEAM_BUILDER.Core
+namespace Desktop_client.Core
 {
     public class Commands : ICommand
     {

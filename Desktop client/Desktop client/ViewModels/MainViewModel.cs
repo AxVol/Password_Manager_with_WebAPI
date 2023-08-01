@@ -1,26 +1,22 @@
-﻿using TFT_TEAM_BUILDER.Core;
+﻿using Desktop_client.Core;
+using Desktop_client.Views;
+using Desktop_client.Services.Interfaces;
+using System.Windows.Controls;
 
 namespace Desktop_client.ViewModels
 {
     public class MainViewModel : ObservableObject
     {
-        private MainViewModel mainViewModel { get; set; }
+        private readonly IPageService pageService;
 
-        private object currentView;
+        public Page CurrentView { get; set; }
 
-        public object CurrentView
+        public MainViewModel(IPageService page) 
         {
-            get => currentView;
-            set 
-            { 
-                currentView = value;
-                OnPropertyChanged();
-            }
-        }
+            pageService = page;
 
-        public MainViewModel() 
-        {
-            mainViewModel = this;
+            pageService.OnPageChanged += (page) => CurrentView = page;
+            pageService.ChangePage(new LoginPage());
         }
     }
 }

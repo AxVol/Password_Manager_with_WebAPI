@@ -4,9 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Desktop_client"
+        xmlns:viewModels="clr-namespace:Desktop_client.ViewModels"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        DataContext="{Binding MainViewModel, Source={StaticResource DIcontainer}}"
+        Title="Password Manager" 
+        Height="720" 
+        Width="1220">
     <Grid>
-        
+        <Frame Content="{Binding CurrentView}" NavigationUIVisibility="Hidden"/>
     </Grid>
 </Window>

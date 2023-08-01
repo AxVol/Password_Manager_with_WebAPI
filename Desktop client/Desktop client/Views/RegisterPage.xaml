@@ -1,0 +1,54 @@
+﻿<Page x:Class="Desktop_client.Views.RegisterPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Desktop_client.Views"
+      mc:Ignorable="d" 
+      d:DesignHeight="720" d:DesignWidth="1220"
+      Title="RegisterPage"
+      DataContext="{Binding RegisterViewModel, Source={StaticResource DIcontainer}}">
+
+    <Grid Background="White">
+        <TextBlock TextAlignment="Center" 
+                   FontSize="80">
+            Password Manager
+        </TextBlock>
+        <TextBlock Style="{StaticResource TextBlock}"
+                   TextAlignment="Center"
+                   Margin="0,120,0,0">
+            Регистрация
+        </TextBlock>
+        <Grid>
+            <TextBlock Text="Логин"
+                       Margin="150,235,0,0"
+                       Style="{StaticResource TextBlock}"/>
+            <TextBlock Text="Почта"
+                       Margin="150,275,0,0"
+                       Style="{StaticResource TextBlock}"/>
+            <TextBlock Text="Пароль"
+                       Margin="150,315,0,0"
+                       Style="{StaticResource TextBlock}"/>
+            <TextBlock Text="Повторите пароль"
+                       Margin="150,355,0,0"
+                       Style="{StaticResource TextBlock}"/>
+            <TextBox Style="{StaticResource TextBox}" 
+                     Margin="100,-130,5,50">
+            </TextBox>
+            <TextBox Style="{StaticResource TextBox}" 
+                     Margin="100,-50,5,50">
+            </TextBox>
+            <TextBox Style="{StaticResource TextBox}" 
+                     Margin="100,30,5,50">
+            </TextBox>
+            <TextBox Style="{StaticResource TextBox}" 
+                     Margin="100,110,5,50">
+            </TextBox>
+            <Button Content="Зарегистрироваться"
+                    Style="{StaticResource Button}"
+                    Height="35"
+                    Width="220"
+                    Margin="100,150,0,0"/>
+        </Grid>
+    </Grid>
+</Page>

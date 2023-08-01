@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace TFT_TEAM_BUILDER.Core
+namespace Desktop_client.Core
 {
     public class ObservableObject : INotifyPropertyChanged
     {

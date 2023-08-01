@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace Desktop_client.Views
 {
     /// <summary>
-    /// Логика взаимодействия для LoginView.xaml
+    /// Логика взаимодействия для AddPassword.xaml
     /// </summary>
-    public partial class LoginView : Page
+    public partial class AddPassword : Page
     {
-        public LoginView()
+        public AddPassword()
         {
             InitializeComponent();
         }
