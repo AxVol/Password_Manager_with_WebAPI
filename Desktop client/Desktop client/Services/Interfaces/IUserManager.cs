@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using Desktop_client.Models;
 
-namespace Desktop_client.Models
+namespace Desktop_client.Services.Interfaces
 {
     public interface IUserManager
     {

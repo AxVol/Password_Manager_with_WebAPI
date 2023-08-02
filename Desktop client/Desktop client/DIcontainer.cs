@@ -2,7 +2,6 @@
 using Desktop_client.Services.Interfaces;
 using Desktop_client.Services.Implementations;
 using Microsoft.Extensions.DependencyInjection;
-using Desktop_client.Models;
 
 namespace Desktop_client
 {
@@ -15,8 +14,13 @@ namespace Desktop_client
             var services = new ServiceCollection();
 
             services.AddTransient<MainViewModel>();
+            services.AddTransient<LoginViewModel>();
+
+            services.AddSingleton<IConnectionService, ConnectionService>();
             services.AddSingleton<IPageService, PageService>();
             services.AddSingleton<IUserManager, UserManager>();
+
+            services.AddHttpClient();
 
             serviceProvider = services.BuildServiceProvider();
 
@@ -27,5 +31,6 @@ namespace Desktop_client
         }
 
         public MainViewModel MainViewModel => serviceProvider.GetRequiredService<MainViewModel>();
+        public LoginViewModel LoginViewModel => serviceProvider.GetRequiredService<LoginViewModel>();
     }
 }
