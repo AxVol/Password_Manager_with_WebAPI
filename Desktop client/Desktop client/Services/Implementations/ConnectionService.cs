@@ -48,9 +48,28 @@ namespace Desktop_client.Services.Implementations
             }
         }
 
-        public async Task Register(User user)
+        public async Task<string> Register(RegistrationModel model)
         {
-            throw new NotImplementedException();
+            JsonContent json = JsonContent.Create(model);
+            using var response = await httpClient.PostAsync("https://localhost:7125/api/User/Register", json);
+
+            try
+            {
+                User? user = await response.Content.ReadFromJsonAsync<User>();
+
+                if (user != null)
+                {
+                    userManager.user = user;
+
+                    return "Успешно";
+                }
+
+                return "Не предвиденная ошибка";
+            }
+            catch (Exception ex)
+            {
+                return await response.Content.ReadFromJsonAsync<string>();
+            }
         }
     }
 }

@@ -15,6 +15,11 @@
             Password Manager
         </TextBlock>
         <Grid>
+            <TextBlock Text="{Binding ErrorMessage}"
+                       Margin="0,220,0,0"
+                       TextAlignment="Center"
+                       FontSize="24"
+                       Style="{StaticResource TextBlock}"/>
             <TextBlock Text="Логин"
                        Margin="310,283,0,0"
                        Style="{StaticResource TextBlock}"/>

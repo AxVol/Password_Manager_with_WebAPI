@@ -6,6 +6,6 @@ namespace Desktop_client.Services.Interfaces
     public interface IConnectionService
     {
         public Task<string> Login(string login, string password);
-        public Task Register(User user);
+        public Task<string> Register(RegistrationModel model);
     }
 }

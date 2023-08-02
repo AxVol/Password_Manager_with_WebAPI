@@ -15,6 +15,7 @@ namespace Desktop_client
 
             services.AddTransient<MainViewModel>();
             services.AddTransient<LoginViewModel>();
+            services.AddTransient<RegisterViewModel>();
 
             services.AddSingleton<IConnectionService, ConnectionService>();
             services.AddSingleton<IPageService, PageService>();
@@ -26,11 +27,15 @@ namespace Desktop_client
 
             foreach (var item in services)
             {
-                serviceProvider.GetRequiredService(item.ServiceType);
+                if (!item.ServiceType.ContainsGenericParameters)
+                {
+                    serviceProvider.GetRequiredService(item.ServiceType);
+                }
             }
         }
 
         public MainViewModel MainViewModel => serviceProvider.GetRequiredService<MainViewModel>();
         public LoginViewModel LoginViewModel => serviceProvider.GetRequiredService<LoginViewModel>();
+        public RegisterViewModel RegisterViewModel => serviceProvider.GetRequiredService<RegisterViewModel>();
     }
 }

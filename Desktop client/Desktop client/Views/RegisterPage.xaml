@@ -20,6 +20,11 @@
             Регистрация
         </TextBlock>
         <Grid>
+            <TextBlock Text="{Binding ErrorMessage}"
+                       FontSize="24"
+                       Margin="0,185,0,0"
+                       TextAlignment="Center"
+                       Style="{StaticResource TextBlock}"/>
             <TextBlock Text="Логин"
                        Margin="150,235,0,0"
                        Style="{StaticResource TextBlock}"/>
@@ -33,18 +38,23 @@
                        Margin="150,355,0,0"
                        Style="{StaticResource TextBlock}"/>
             <TextBox Style="{StaticResource TextBox}" 
+                     Text="{Binding Login}"
                      Margin="100,-130,5,50">
             </TextBox>
             <TextBox Style="{StaticResource TextBox}" 
-                     Margin="100,-50,5,50">
+                     Margin="100,-50,5,50"
+                     Text="{Binding Email}">
             </TextBox>
             <TextBox Style="{StaticResource TextBox}" 
-                     Margin="100,30,5,50">
+                     Margin="100,30,5,50"
+                     Text="{Binding Password}">
             </TextBox>
             <TextBox Style="{StaticResource TextBox}" 
-                     Margin="100,110,5,50">
+                     Margin="100,110,5,50"
+                     Text="{Binding RepeatPassword}">
             </TextBox>
             <Button Content="Зарегистрироваться"
+                    Command="{Binding Register}"
                     Style="{StaticResource Button}"
                     Height="35"
                     Width="220"

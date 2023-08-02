@@ -12,8 +12,10 @@ namespace Desktop_client.ViewModels
 
         public Commands LoginCommand { get; set; }
         public Commands RegisterCommand { get; set; }
+
         public string Login { get; set; }
         public string Password { get; set; }
+        public string ErrorMessage { get; set; }
 
         public LoginViewModel(IPageService page, IConnectionService connection)
         {
@@ -26,12 +28,22 @@ namespace Desktop_client.ViewModels
 
         private void LoginUser(object data)
         {
+            if (Login == string.Empty && Password == string.Empty)
+            {
+                ErrorMessage = "Не все поля заполены";
+                return;
+            }
+
             Task<string> response = connectionService.Login(Login, Password);
 
             if (response.Result == "Успешно") 
             {
                 pageService.ChangePage(new PasswordsPage());
+
+                return;
             }
+
+            ErrorMessage = response.Result;
         }
         private void Register(object data)
         {
