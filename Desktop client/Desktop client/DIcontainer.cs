@@ -2,6 +2,7 @@
 using Desktop_client.Services.Interfaces;
 using Desktop_client.Services.Implementations;
 using Microsoft.Extensions.DependencyInjection;
+using Desktop_client.Models;
 
 namespace Desktop_client
 {
@@ -15,6 +16,7 @@ namespace Desktop_client
 
             services.AddTransient<MainViewModel>();
             services.AddSingleton<IPageService, PageService>();
+            services.AddSingleton<IUserManager, UserManager>();
 
             serviceProvider = services.BuildServiceProvider();
 

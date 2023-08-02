@@ -2,6 +2,7 @@
 using WebApi.DAL.Interfaces;
 using WebApi.Domain.Entity;
 using WebApi.Domain.Response;
+using WebApi.Domain.Response.Password;
 using WebApi.Domain.ViewModels.Password;
 using WebApi.Service.Interfaces;
 
@@ -23,7 +24,7 @@ namespace WebApi.Service.Implementations
             cryptography = crypt;
         }
 
-        public async Task<IResponse<Password>> Create(PasswordViewModel model)
+        public async Task<IResponse<PasswordResponse>> Create(PasswordViewModel model)
         {
             try
             {
@@ -37,23 +38,28 @@ namespace WebApi.Service.Implementations
                     PassWord = cypherPass,
                     PassService = model.Service
                 };
+                PasswordResponse passwordResponse = new PasswordResponse()
+                {
+                    Id = model.Id,
+                    Login = model.Login,
+                    Password = model.Password,
+                    Service = model.Service
+                };
 
                 await passwordRepository.Create(password);
 
-                password.PassWord = model.Password;
-
-                return new Response<Password>()
+                return new Response<PasswordResponse>()
                 {
                     Description = "Пароль успешно добавлен",
                     Status = Domain.Enum.RequestStatus.Success,
-                    Value = password
+                    Value = passwordResponse
                 };
             }
             catch (Exception ex)
             {
                 logger.LogError(ex.Message);
 
-                return new Response<Password>()
+                return new Response<PasswordResponse>()
                 {
                     Description = "Непредвиденная ошибка",
                     Status = Domain.Enum.RequestStatus.Failed
@@ -61,14 +67,14 @@ namespace WebApi.Service.Implementations
             }
         }
 
-        public async Task<IResponse<Password>> Delete(PasswordViewModel model)
+        public async Task<IResponse<PasswordResponse>> Delete(PasswordViewModel model)
         {
             Password? password = passwordRepository.GetAll().
                 FirstOrDefault(p => p.Id == model.Id && p.User.SecretToken == model.SecretToken);
 
             if (password == null)
             {
-                return new Response<Password>()
+                return new Response<PasswordResponse>()
                 {
                     Description = "Попытка удалить несуществующий пароль",
                     Status = Domain.Enum.RequestStatus.Failed
@@ -77,23 +83,24 @@ namespace WebApi.Service.Implementations
 
             await passwordRepository.Delete(password);
 
-            return new Response<Password>()
+            return new Response<PasswordResponse>()
             {
                 Description = "Пароль успешно удален",
                 Status = Domain.Enum.RequestStatus.Success
             };
         }
 
-        public async Task<IResponse<Password>> GetAll(PasswordViewModel model)
+        public async Task<IResponse<PasswordResponse>> GetAll(PasswordViewModel model)
         {
             try
             {
                 IEnumerable<Password> passwords = passwordRepository.GetAll().
                     Where(p => p.User.SecretToken == model.SecretToken);
+                List<PasswordResponse> responsePasswords = new List<PasswordResponse>();
 
                 if (!passwords.Any())
                 {
-                    return new Response<Password>()
+                    return new Response<PasswordResponse>()
                     {
                         Description = "Пользователь не найден или у него нету паролей",
                         Status = Domain.Enum.RequestStatus.Failed
@@ -104,19 +111,28 @@ namespace WebApi.Service.Implementations
                 {
                     string pass = cryptography.DecryptPassword(password.PassWord);
                     password.PassWord = pass;
+
+                    PasswordResponse responseModel = new PasswordResponse()
+                    {
+                        Id = password.Id,
+                        Login = password.LoginService,
+                        Password = password.PassWord,
+                        Service = password.PassService,
+                    };
+                    responsePasswords.Add(responseModel);
                 }
 
-                return new Response<Password>()
+                return new Response<PasswordResponse>()
                 {
                     Status = Domain.Enum.RequestStatus.Success,
-                    Values = passwords
+                    Values = responsePasswords
                 };
             }
             catch (Exception ex)
             {
                 logger.LogError(ex.Message);
 
-                return new Response<Password>()
+                return new Response<PasswordResponse>()
                 {
                     Description = "Не предвиденная ошибка",
                     Status = Domain.Enum.RequestStatus.Failed
@@ -124,14 +140,14 @@ namespace WebApi.Service.Implementations
             }
         }
 
-        public async Task<IResponse<Password>> Update(PasswordViewModel model)
+        public async Task<IResponse<PasswordResponse>> Update(PasswordViewModel model)
         {
             Password? password = passwordRepository.GetAll().
                 FirstOrDefault(p => p.Id == model.Id && p.User.SecretToken == model.SecretToken);
 
             if (password == null)
             {
-                return new Response<Password>()
+                return new Response<PasswordResponse>()
                 {
                     Description = "Попытка изменить несуществующий пароль",
                     Status = Domain.Enum.RequestStatus.Failed
@@ -145,13 +161,19 @@ namespace WebApi.Service.Implementations
 
             await passwordRepository.Update(password);
 
-            password.PassWord = model.Password;
+            PasswordResponse passwordResponse = new PasswordResponse()
+            {
+                Id = model.Id,
+                Login = model.Login,
+                Password = model.Password,
+                Service = model.Service
+            };
 
-            return new Response<Password>()
+            return new Response<PasswordResponse>()
             {
                 Description = "Пароль успешно изменен",
                 Status = Domain.Enum.RequestStatus.Success,
-                Value = password
+                Value = passwordResponse
             };
         }
     }

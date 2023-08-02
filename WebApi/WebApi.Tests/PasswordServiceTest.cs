@@ -39,7 +39,7 @@ namespace WebApi.Tests
             var response = await passwordService.Create(passwordViewModel);
 
             // Assert
-            Assert.Equal(passwordViewModel.Password, response.Value.PassWord);
+            Assert.Equal(passwordViewModel.Password, response.Value.Password);
         }
 
         [Fact]

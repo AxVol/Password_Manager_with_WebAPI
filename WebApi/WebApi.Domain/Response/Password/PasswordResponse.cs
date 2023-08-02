@@ -1,10 +1,10 @@
-﻿namespace Desktop_client.Models
+﻿namespace WebApi.Domain.Response.Password
 {
-    public class Password
+    public class PasswordResponse
     {
         public int Id { get; set; }
         public string Login { get; set; }
-        public string PassWord { get; set; }
+        public string Password { get; set; }
         public string Service { get; set; }
     }
 }
