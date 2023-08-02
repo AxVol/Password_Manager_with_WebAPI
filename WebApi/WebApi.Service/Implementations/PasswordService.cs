@@ -33,6 +33,7 @@ namespace WebApi.Service.Implementations
                 Password password = new Password()
                 {
                     User = user,
+                    LoginService = model.Login,
                     PassWord = cypherPass,
                     PassService = model.Service
                 };
@@ -101,8 +102,8 @@ namespace WebApi.Service.Implementations
 
                 foreach (Password password in passwords)
                 {
-                    //string pass = cryptography.DecryptPassword(password.PassWord);
-                    password.PassWord = "123";
+                    string pass = cryptography.DecryptPassword(password.PassWord);
+                    password.PassWord = pass;
                 }
 
                 return new Response<Password>()
@@ -138,6 +139,7 @@ namespace WebApi.Service.Implementations
             }
 
             string cypherPass = cryptography.EncryptPassword(model.Password);
+            password.LoginService = model.Login;
             password.PassWord = cypherPass;
             password.PassService = model.Service;
 

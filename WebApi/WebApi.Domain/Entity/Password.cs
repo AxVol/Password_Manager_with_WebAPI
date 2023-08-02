@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public User User { get; set; }
+        public string LoginService { get; set; }
         public string PassWord { get; set; }
         public string PassService { get; set; }
     }

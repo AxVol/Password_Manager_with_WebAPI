@@ -30,6 +30,7 @@ namespace WebApi.Tests
             PasswordViewModel passwordViewModel = new PasswordViewModel()
             {
                 SecretToken = "ZGUwNTAyZDItZmFjZC00N2M3LWFkZTQtOTYyMWQ1NTFlMzk4",
+                Login = "login1",
                 Password = "first",
                 Service = "google",
             };
@@ -48,6 +49,7 @@ namespace WebApi.Tests
             PasswordViewModel passwordViewModel = new PasswordViewModel()
             {
                 SecretToken = "ZGUwNTAyZDItZmFjZC00N2M3LWFDSADASDATQtOTYyMWQ1NTFlMzk4",
+                Login = "login1",
                 Password = "first",
                 Service = "google",
             };
@@ -112,6 +114,7 @@ namespace WebApi.Tests
             {
                 Id = 1,
                 SecretToken = "ZGUwNTAyZDItZmFjZC00N2M3LWFkZTQtOTYyMWQ1NTFlMzk4",
+                Login = "login1",
                 Password = "first",
                 Service = "google",
             };
@@ -131,6 +134,7 @@ namespace WebApi.Tests
             {
                 Id = 33,
                 SecretToken = "ZGUwNTAyZDItZmFjZC00N2M3LWFDSADASDATQtOTYyMWQ1NTFlMzk4",
+                Login = "login1",
                 Password = "first",
                 Service = "google",
             };
@@ -150,6 +154,7 @@ namespace WebApi.Tests
             {
                 Id = 1,
                 SecretToken = "ZGUwNTAyZDItZmFjZC00N2MDASDSADSDATQtOTYyMWQ1NTFlMzk4",
+                Login = "login1",
                 Password = "first",
                 Service = "google",
             };

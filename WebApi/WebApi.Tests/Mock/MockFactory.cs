@@ -88,6 +88,7 @@ namespace WebApi.Tests.Mock
                         Password = "B5MjpJwwDc2N/+FGDe3gLA==", //login1
                         SecretToken = "ZGUwNTAyZDItZmFjZC00N2M3LWFkZTQtOTYyMWQ1NTFlMzk4"
                     },
+                    LoginService = "login1",
                     PassWord = "eKBXlrliDRm1fmhAF8TlOw==", //123
                     PassService = "faceebook"
                 },
@@ -102,6 +103,7 @@ namespace WebApi.Tests.Mock
                         Password = "OzjCI80HZ8Xm9Ap/uGFZtA==", //login2
                         SecretToken = "NGJkM2JlMDQtMzQ4MC00YWJlLTg0ZjgtZjhjOTRkNDgzMzQ5"
                     },
+                    LoginService = "login2",
                     PassWord = "vrcR5dYkzSJIgvSW6W/3JQ==", //crack
                     PassService = "faceebook"
                 },
@@ -116,6 +118,7 @@ namespace WebApi.Tests.Mock
                         Password = "OzjCI80HZ8Xm9Ap/uGFZtA==", //login2
                         SecretToken = "NGJkM2JlMDQtMzQ4MC00YWJlLTg0ZjgtZjhjOTRkNDgzMzQ5"
                     },
+                    LoginService = "login2",
                     PassWord = "On2uylG9BrQrh077uVZP6g==", //best
                     PassService = "youtube"
                 },
