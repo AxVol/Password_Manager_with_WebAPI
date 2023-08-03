@@ -113,7 +113,7 @@ namespace WebApi.Service
                 {
                     Description = "Токен успешно обновлен",
                     Status = Domain.Enum.RequestStatus.Success,
-                    Value = newToken
+                    Value = user.SecretToken
                 };
             }
             catch (Exception ex)

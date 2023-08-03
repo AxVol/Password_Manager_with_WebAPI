@@ -2,6 +2,7 @@
 using Desktop_client.Models;
 using Desktop_client.Services.Interfaces;
 using Desktop_client.Views;
+using System.Linq;
 
 namespace Desktop_client.ViewModels
 {
@@ -55,9 +56,14 @@ namespace Desktop_client.ViewModels
         private async void Send(object data)
         {
             IsEnabled = false;
+            int id = default;
+
+            if (pageService.password != null)
+                id = pageService.password.Id;
 
             PasswordSendModel password = new PasswordSendModel()
             {
+                Id = id,
                 SecretToken = userManager.user.SecretToken,
                 Service = Service,
                 Login = Login,
@@ -74,6 +80,7 @@ namespace Desktop_client.ViewModels
                     break;
             }
 
+            userManager.passwords = await passwordService.GetAll(userManager.user.SecretToken);
             pageService.ChangePage(new PasswordsPage());
         }
     }

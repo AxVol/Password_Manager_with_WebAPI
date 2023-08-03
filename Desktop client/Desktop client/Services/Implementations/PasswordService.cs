@@ -1,10 +1,12 @@
 ﻿using Desktop_client.Models;
 using Desktop_client.Services.Interfaces;
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace Desktop_client.Services.Implementations
 {
@@ -53,9 +55,17 @@ namespace Desktop_client.Services.Implementations
             return password;
         }
 
-        public Task<IEnumerable<Password>> GetAll(PasswordSendModel model)
+        public async Task<ObservableCollection<Password>> GetAll(string token)
         {
-            throw new NotImplementedException();
+            using var response = await httpClient.GetAsync
+                ($"https://localhost:7125/api/Passwords/GetUserPass?secretToken={token}");
+
+            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                return new ObservableCollection<Password>();
+
+            ObservableCollection<Password>? passwords = await response.Content.ReadFromJsonAsync<ObservableCollection<Password>>();
+
+            return passwords;
         }
 
         public async Task Update(PasswordSendModel model)
@@ -65,9 +75,18 @@ namespace Desktop_client.Services.Implementations
             await httpClient.PutAsync("https://localhost:7125/api/Passwords/UpdatePass", json);
         }
 
-        public Task<string> UpdateUserToken(string token)
+        public async Task<string> UpdateUserToken(string token)
         {
-            throw new NotImplementedException();
+            using var response = await httpClient.PutAsync($"https://localhost:7125/api/User/UpdateToken?secretToken={token}", null);   
+            string backToken = await response.Content.ReadAsStringAsync(); //{"value":"NTUwY2ExODUtODMwZi00Mjc3LWJmYjAtYTc3ZGZiMjY2ZDdh"}
+
+            var sb = new StringBuilder(backToken);
+            sb.Remove(0, 10);
+            sb.Replace('\\', ' ');
+            sb.Replace('"', ' ');
+            sb.Replace('}', ' ');
+
+            return sb.ToString(); 
         }
     }
 }

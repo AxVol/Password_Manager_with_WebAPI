@@ -5,7 +5,9 @@ using System.Windows;
 using System;
 using System.Windows.Media.Imaging;
 using System.Drawing;
-using Desktop_client.Services.Implementations;
+using System.Collections.ObjectModel;
+using Desktop_client.Models;
+using System.Linq;
 
 namespace Desktop_client.ViewModels
 {
@@ -15,6 +17,8 @@ namespace Desktop_client.ViewModels
         private readonly IPasswordService passwordService;
         private IUserManager userManager;
 
+        public ObservableCollection<Password> Passwords { get; private set; }
+        public bool IsEnabled { get; set; } = true;
         public string Token { get; set; }
         public BitmapSource CopyImage 
         { 
@@ -29,6 +33,9 @@ namespace Desktop_client.ViewModels
         public Commands LogOut { get; set; }
         public Commands AddPassword { get; set; }
         public Commands Copy { get; set; }
+        public Commands UpdateToken { get; set; }
+        public Commands Update { get; set; }
+        public Commands Delete { get; set; }
 
         public PasswordsViewModel(IPageService page, IUserManager manager, IPasswordService password) 
         {
@@ -36,12 +43,59 @@ namespace Desktop_client.ViewModels
             userManager = manager;
             passwordService = password;
 
-            if(userManager.user != null)
+            if (userManager.user != null)
+            {
+                Passwords = userManager.passwords;
                 Token = userManager.user.SecretToken;
+            }
 
             LogOut = new Commands(Logout);
             AddPassword = new Commands(Addpassword);
             Copy = new Commands(CopyToken);
+            UpdateToken = new Commands(TokenUpdate);
+            Update = new Commands(UpdatePassword);
+            Delete = new Commands(DeletePassword);
+        }
+
+        private void UpdatePassword(object data)
+        {
+            int id = Convert.ToInt32(data);
+
+            Password password = Passwords.First(p => p.Id == id);
+
+            pageService.PasswordPageStatus = "Update";
+            pageService.password = password;
+            pageService.ChangePage(new AddPassword());
+        }
+
+        private async void DeletePassword(object data)
+        {
+            IsEnabled = false;
+            int id = Convert.ToInt32(data);
+
+            Password password = Passwords.First(p => p.Id == id);
+
+            PasswordSendModel sendModel = new PasswordSendModel()
+            {
+                Id = password.Id,
+                SecretToken = userManager.user.SecretToken,
+                Login = password.Login,
+                Password = password.PassWord,
+                Service = password.Service,
+            };
+
+            await passwordService.Delete(sendModel);
+            userManager.passwords = await passwordService.GetAll(userManager.user.SecretToken);
+
+            pageService.ChangePage(new PasswordsPage());
+        }
+
+        private async void TokenUpdate(object data)
+        {
+            string token = await passwordService.UpdateUserToken(userManager.user.SecretToken);
+
+            userManager.user.SecretToken = token;
+            Token = token;
         }
 
         private void CopyToken(object data)

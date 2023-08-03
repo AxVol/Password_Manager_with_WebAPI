@@ -11,12 +11,14 @@ namespace Desktop_client.Services.Implementations
     public class ConnectionService : IConnectionService
     {
         private readonly HttpClient httpClient;
+        private readonly IPasswordService passwordService;
         private IUserManager userManager;
 
-        public ConnectionService(IHttpClientFactory httpFactory, IUserManager manager) 
+        public ConnectionService(IHttpClientFactory httpFactory, IUserManager manager, IPasswordService pass) 
         {
             httpClient = httpFactory.CreateClient();
             userManager = manager;
+            passwordService = pass;
         }
 
         public async Task<string> Login(string login, string password)
@@ -42,6 +44,7 @@ namespace Desktop_client.Services.Implementations
             if (user != null)
             {
                 userManager.user = user;
+                userManager.passwords = await passwordService.GetAll(userManager.user.SecretToken);
 
                 return "Успешно";
             }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using WebApi.Domain.ViewModels.User;
 using WebApi.Service;
 
@@ -45,7 +46,7 @@ namespace WebApi.Controllers
         {
             var response = await userService.UpdateToken(secretToken);
 
-            return new JsonResult(response);
+            return Ok(new { response.Value });
         }
     }
 }
