@@ -3,7 +3,6 @@ using Desktop_client.Services.Interfaces;
 using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using Desktop_client.Models;
-using System.Threading.Tasks;
 using Desktop_client.Views;
 
 namespace Desktop_client.ViewModels
@@ -14,12 +13,14 @@ namespace Desktop_client.ViewModels
         private readonly IPageService pageService;
 
         public Commands Register { get; set; }
+        public Commands BackToLogin { get; set; }
 
         public string ErrorMessage { get; set; }
         public string Login { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
         public string RepeatPassword { get; set; }
+        public bool EnableButton { get; set; } = true;
 
         public RegisterViewModel(IConnectionService connection, IPageService page) 
         {
@@ -27,9 +28,15 @@ namespace Desktop_client.ViewModels
             pageService = page;
 
             Register = new Commands(Registration);
+            BackToLogin = new Commands(BackLogin);
         }
 
-        public void Registration(object data)
+        private void BackLogin(object data)
+        {
+            pageService.ChangePage(new LoginPage());
+        }
+
+        private async void Registration(object data)
         {
             char[] specSymbols = new char[]
             {
@@ -37,10 +44,19 @@ namespace Desktop_client.ViewModels
             };
             EmailAddressAttribute emailValidate = new EmailAddressAttribute();
 
+            if (Login == null || Email == null || Password == null || RepeatPassword == null)
+            {
+                ErrorMessage = "Заполните все поля";
+
+                return;
+            }
+
+            EnableButton = false;
+
             if ((Login != string.Empty)
-                && (Email != string.Empty)
-                && (Password != string.Empty)
-                && (RepeatPassword != string.Empty))
+                || (Email != string.Empty)
+                || (Password != string.Empty)
+                || (RepeatPassword != string.Empty))
             {
                 if (Password == RepeatPassword)
                 {
@@ -58,27 +74,33 @@ namespace Desktop_client.ViewModels
                                 Password = Password,
                             };
 
-                            string response = connectionService.Register(user).Result;
+                            string response = await connectionService.Register(user);
 
                             if (response == "Успешно")
                                 pageService.ChangePage(new PasswordsPage());
 
                             ErrorMessage = response;
+                            EnableButton = true;
+                            return;
                         }
 
                         ErrorMessage = "Некоректная почта";
+                        EnableButton = true;
                         return;
                     }
 
                     ErrorMessage = "Пароль не достаточно сложный";
+                    EnableButton = true;
                     return;
                 }
 
                 ErrorMessage = "Пароли не совпадают";
+                EnableButton = true;
                 return;
             }
 
             ErrorMessage = "Заполните все поля";
+            EnableButton = true;
         }
     }
 }

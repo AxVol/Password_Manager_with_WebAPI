@@ -37,8 +37,10 @@
             <Button Content="Войти"
                     Command="{Binding LoginCommand}"
                     Style="{StaticResource Button}"
+                    IsEnabled="{Binding EnableButton}"
                     Margin="-180,120,0,0"/>
             <Button Content="Регистрация"
+                    IsEnabled="{Binding EnableButton}"
                     Command="{Binding RegisterCommand}"
                     Style="{StaticResource Button}"
                     Margin="170,120,0,0"/>

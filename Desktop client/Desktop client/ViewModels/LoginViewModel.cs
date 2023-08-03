@@ -16,6 +16,7 @@ namespace Desktop_client.ViewModels
         public string Login { get; set; }
         public string Password { get; set; }
         public string ErrorMessage { get; set; }
+        public bool EnableButton { get; set; } = true;
 
         public LoginViewModel(IPageService page, IConnectionService connection)
         {
@@ -35,6 +36,7 @@ namespace Desktop_client.ViewModels
             }
             else
             {
+                EnableButton = false;
                 string response = await connectionService.Login(Login, Password);
 
                 if (response == "Успешно")
