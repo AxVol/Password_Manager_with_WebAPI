@@ -61,7 +61,7 @@ namespace Desktop_client.ViewModels
                             string response = connectionService.Register(user).Result;
 
                             if (response == "Успешно")
-                                pageService.ChangePage(new AddPassword());
+                                pageService.ChangePage(new PasswordsPage());
 
                             ErrorMessage = response;
                         }

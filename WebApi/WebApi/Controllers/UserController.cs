@@ -22,11 +22,9 @@ namespace WebApi.Controllers
             var response = await userService.Login(model);
 
             if (response.Status == Domain.Enum.RequestStatus.Success)
-            {
-                return new JsonResult(response.Value);
-            }   
+                return new JsonResult(response.Value); 
 
-            return new JsonResult(response.Description);
+            return NotFound(new { response.Description });
         }
 
         [Route("Register")]
@@ -36,11 +34,9 @@ namespace WebApi.Controllers
             var response = await userService.Register(model);
 
             if (response.Status == Domain.Enum.RequestStatus.Success)
-            {
                 return new JsonResult(response.Value);
-            }
             
-            return new JsonResult(response.Description);
+            return BadRequest(new { response.Description });
         }
 
         [Route("UpdateToken")]

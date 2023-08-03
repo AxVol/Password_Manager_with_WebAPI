@@ -27,9 +27,7 @@ namespace WebApi.Controllers
             var response = await passwordService.GetAll(model);
 
             if (response.Status == Domain.Enum.RequestStatus.Failed)
-            {
-                return new JsonResult(response.Description);
-            }
+                return BadRequest(new { response.Description });
 
             return new JsonResult(response.Values);
         }
@@ -41,9 +39,7 @@ namespace WebApi.Controllers
             var response = await passwordService.Create(model);
 
             if (response.Status == Domain.Enum.RequestStatus.Failed)
-            {
-                return new JsonResult(response.Description);
-            }
+                return BadRequest(new { response.Description });
 
             return new JsonResult(response.Value);
         }
@@ -55,9 +51,7 @@ namespace WebApi.Controllers
             var response = await passwordService.Update(model);
 
             if (response.Status == Domain.Enum.RequestStatus.Failed)
-            {
-                return new JsonResult(response.Description);
-            }
+                return BadRequest(new { response.Description });
 
             return new JsonResult(response.Value);
         }

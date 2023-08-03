@@ -1,6 +1,7 @@
 ﻿using Desktop_client.Models;
 using Desktop_client.Services.Interfaces;
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -29,23 +30,23 @@ namespace Desktop_client.Services.Implementations
             JsonContent json = JsonContent.Create(loginModel);
             using var response = await httpClient.PostAsync("https://localhost:7125/api/User/Authentication", json);
 
-            try
+            if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                User? user = await response.Content.ReadFromJsonAsync<User>();
+                Error? error = await response.Content.ReadFromJsonAsync<Error>();
 
-                if (user != null)
-                {
-                    userManager.user = user;
-
-                    return "Успешно";
-                }
-
-                return "Не предвиденная ошибка";
+                return error.Description;
             }
-            catch(Exception ex)
+
+            User? user = await response.Content.ReadFromJsonAsync<User>();
+
+            if (user != null)
             {
-                return await response.Content.ReadFromJsonAsync<string>();
+                userManager.user = user;
+
+                return "Успешно";
             }
+
+            return "Не предвиденная ошибка";
         }
 
         public async Task<string> Register(RegistrationModel model)
@@ -53,23 +54,23 @@ namespace Desktop_client.Services.Implementations
             JsonContent json = JsonContent.Create(model);
             using var response = await httpClient.PostAsync("https://localhost:7125/api/User/Register", json);
 
-            try
+            if (response.StatusCode == HttpStatusCode.BadRequest)
             {
-                User? user = await response.Content.ReadFromJsonAsync<User>();
+                Error? error = await response.Content.ReadFromJsonAsync<Error>();
 
-                if (user != null)
-                {
-                    userManager.user = user;
-
-                    return "Успешно";
-                }
-
-                return "Не предвиденная ошибка";
+                return error.Description;
             }
-            catch (Exception ex)
+
+            User? user = await response.Content.ReadFromJsonAsync<User>();
+
+            if (user != null)
             {
-                return await response.Content.ReadFromJsonAsync<string>();
+                userManager.user = user;
+
+                return "Успешно";
             }
+
+            return "Не предвиденная ошибка";
         }
     }
 }

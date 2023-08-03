@@ -26,24 +26,26 @@ namespace Desktop_client.ViewModels
             RegisterCommand = new Commands(Register);
         }
 
-        private void LoginUser(object data)
+        private async void LoginUser(object data)
         {
-            if (Login == string.Empty && Password == string.Empty)
+            if ((Login == null || Password == null)
+                || (Login == string.Empty || Password == string.Empty))
             {
                 ErrorMessage = "Не все поля заполены";
-                return;
             }
-
-            Task<string> response = connectionService.Login(Login, Password);
-
-            if (response.Result == "Успешно") 
+            else
             {
-                pageService.ChangePage(new PasswordsPage());
+                string response = await connectionService.Login(Login, Password);
 
-                return;
+                if (response == "Успешно")
+                {
+                    pageService.ChangePage(new PasswordsPage());
+
+                    return;
+                }
+
+                ErrorMessage = response;
             }
-
-            ErrorMessage = response.Result;
         }
         private void Register(object data)
         {
