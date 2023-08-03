@@ -46,6 +46,7 @@ namespace Desktop_client.ViewModels
                     return;
                 }
 
+                EnableButton = true;
                 ErrorMessage = response;
             }
         }

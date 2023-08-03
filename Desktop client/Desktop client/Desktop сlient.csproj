@@ -9,9 +9,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ViewModels\image\**" />
+    <EmbeddedResource Remove="ViewModels\image\**" />
+    <None Remove="ViewModels\image\**" />
+    <Page Remove="ViewModels\image\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
     <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
   </ItemGroup>
 
 </Project>

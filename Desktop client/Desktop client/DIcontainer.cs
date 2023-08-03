@@ -16,8 +16,11 @@ namespace Desktop_client
             services.AddTransient<MainViewModel>();
             services.AddTransient<LoginViewModel>();
             services.AddTransient<RegisterViewModel>();
+            services.AddTransient<PasswordsViewModel>();
+            services.AddTransient<AddPasswordViewModel>();
 
             services.AddSingleton<IConnectionService, ConnectionService>();
+            services.AddSingleton<IPasswordService, PasswordService>();
             services.AddSingleton<IPageService, PageService>();
             services.AddSingleton<IUserManager, UserManager>();
 
@@ -37,5 +40,7 @@ namespace Desktop_client
         public MainViewModel MainViewModel => serviceProvider.GetRequiredService<MainViewModel>();
         public LoginViewModel LoginViewModel => serviceProvider.GetRequiredService<LoginViewModel>();
         public RegisterViewModel RegisterViewModel => serviceProvider.GetRequiredService<RegisterViewModel>();
+        public PasswordsViewModel PasswordsViewModel => serviceProvider.GetRequiredService<PasswordsViewModel>();
+        public AddPasswordViewModel AddPasswordViewModel => serviceProvider.GetRequiredService<AddPasswordViewModel>();
     }
 }

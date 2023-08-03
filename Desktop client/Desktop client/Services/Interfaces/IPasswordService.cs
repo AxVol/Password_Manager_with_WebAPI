@@ -8,8 +8,8 @@ namespace Desktop_client.Services.Interfaces
     {
         public Task<IEnumerable<Password>> GetAll(PasswordSendModel model);
         public Task Delete(PasswordSendModel model);
-        public Task<Password> Update(PasswordSendModel model);
-        public Task<Password> Create(PasswordSendModel model);
+        public Task Update(PasswordSendModel model);
+        public Task Create(PasswordSendModel model);
         public Task<string> UpdateUserToken(string token);
         public Task<string> GenerateStrongPassword();
     }
