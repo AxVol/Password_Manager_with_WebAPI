@@ -5,7 +5,6 @@ using System.Collections.ObjectModel;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using System.Text;
 
 namespace Desktop_client.Services.Implementations

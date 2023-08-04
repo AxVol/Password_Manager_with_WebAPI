@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using Desktop_client.Models;
 using Desktop_client.Services.Interfaces;
 
