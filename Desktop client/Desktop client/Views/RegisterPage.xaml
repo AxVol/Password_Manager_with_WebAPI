@@ -9,38 +9,58 @@
       Title="RegisterPage"
       DataContext="{Binding RegisterViewModel, Source={StaticResource DIcontainer}}">
 
-    <Grid Background="White">
-        <TextBlock TextAlignment="Center" 
-                   FontSize="80">
-            Password Manager
-        </TextBlock>
-        <Button Style="{StaticResource Button}"
-                Margin="0,0,1000,600"
-                Content="Назад"
-                Command="{Binding BackToLogin}"
-                IsEnabled="{Binding EnableButton}"/>
-        <TextBlock Style="{StaticResource TextBlock}"
-                   TextAlignment="Center"
-                   Margin="0,120,0,0">
-            Регистрация
-        </TextBlock>
-        <Grid>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="120"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid 
+            Grid.Row="0"
+            Style="{StaticResource BodyTheme}">
+            <Border Style="{StaticResource HeaderBorder}">
+                <Grid>
+                    <TextBlock 
+                        TextAlignment="Center" 
+                        FontSize="80"
+                        Foreground="#FFFFF0">
+                            Password Manager
+                    </TextBlock>
+                    <Button 
+                        Style="{StaticResource Button}"
+                        Margin="0,0,960,0"
+                        Background="#1D1E33"
+                        Content="Назад"
+                        Command="{Binding BackToLogin}"
+                        IsEnabled="{Binding EnableButton}"/>
+                </Grid>
+            </Border>
+        </Grid>
+        <Grid
+            Grid.Row="1"
+            Style="{StaticResource BodyTheme}">
+            <TextBlock 
+                Style="{StaticResource TextBlock}"
+                TextAlignment="Center"
+                Margin="0,50,0,0">
+                    Регистрация
+            </TextBlock>
             <TextBlock Text="{Binding ErrorMessage}"
                        FontSize="24"
-                       Margin="0,185,0,0"
+                       Margin="0,135,0,0"
                        TextAlignment="Center"
                        Style="{StaticResource TextBlock}"/>
             <TextBlock Text="Логин"
-                       Margin="150,235,0,0"
+                       Margin="150,175,0,0"
                        Style="{StaticResource TextBlock}"/>
             <TextBlock Text="Почта"
-                       Margin="150,275,0,0"
+                       Margin="150,215,0,0"
                        Style="{StaticResource TextBlock}"/>
             <TextBlock Text="Пароль"
-                       Margin="150,315,0,0"
+                       Margin="150,255,0,0"
                        Style="{StaticResource TextBlock}"/>
             <TextBlock Text="Повторите пароль"
-                       Margin="150,355,0,0"
+                       Margin="150,295,0,0"
                        Style="{StaticResource TextBlock}"/>
             <TextBox Style="{StaticResource TextBox}" 
                      Text="{Binding Login}"

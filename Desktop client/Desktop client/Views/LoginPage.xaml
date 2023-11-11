@@ -9,22 +9,37 @@
       Title="LoginPage"
       DataContext="{Binding LoginViewModel, Source={StaticResource DIcontainer}}">
 
-    <Grid Background="White">
-        <TextBlock TextAlignment="Center" 
-                   FontSize="80">
-            Password Manager
-        </TextBlock>
-        <Grid>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="120"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid 
+            Grid.Row="0"
+            Style="{StaticResource BodyTheme}">
+            <Border Style="{StaticResource HeaderBorder}">
+                <TextBlock 
+                    TextAlignment="Center" 
+                    FontSize="80"
+                    Foreground="#FFFFF0">
+                        Password Manager
+                </TextBlock>
+            </Border>
+        </Grid>
+        
+        <Grid Style="{StaticResource BodyTheme}"
+              Grid.Row="1">
             <TextBlock Text="{Binding ErrorMessage}"
-                       Margin="0,220,0,0"
+                       Margin="0,170,0,0"
                        TextAlignment="Center"
                        FontSize="24"
                        Style="{StaticResource TextBlock}"/>
             <TextBlock Text="Логин"
-                       Margin="310,283,0,0"
+                       Margin="300,220,0,0"
                        Style="{StaticResource TextBlock}"/>
             <TextBlock Text="Пароль"
-                       Margin="310,320,0,0"
+                       Margin="300,260,0,0"
                        Style="{StaticResource TextBlock}"/>
             <TextBox Style="{StaticResource TextBox}" 
                      Margin="0,0,5,50"

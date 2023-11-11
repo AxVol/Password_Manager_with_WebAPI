@@ -19,20 +19,9 @@ namespace Desktop_client.ViewModels
 
         public ObservableCollection<Password> Passwords { get; private set; }
         public bool IsEnabled { get; set; } = true;
-        public string Token { get; set; }
-        public BitmapSource CopyImage 
-        { 
-            get
-            {
-                BitmapSource image = ConvertImage("image\\copy.png");
-
-                return image;
-            }
-        }
 
         public Commands LogOut { get; set; }
         public Commands AddPassword { get; set; }
-        public Commands Copy { get; set; }
         public Commands UpdateToken { get; set; }
         public Commands Update { get; set; }
         public Commands Delete { get; set; }
@@ -46,12 +35,10 @@ namespace Desktop_client.ViewModels
             if (userManager.user != null)
             {
                 Passwords = userManager.passwords;
-                Token = userManager.user.SecretToken;
             }
 
             LogOut = new Commands(Logout);
             AddPassword = new Commands(Addpassword);
-            Copy = new Commands(CopyToken);
             UpdateToken = new Commands(TokenUpdate);
             Update = new Commands(UpdatePassword);
             Delete = new Commands(DeletePassword);
@@ -95,13 +82,6 @@ namespace Desktop_client.ViewModels
             string token = await passwordService.UpdateUserToken(userManager.user.SecretToken);
 
             userManager.user.SecretToken = token;
-            Token = token;
-        }
-
-        private void CopyToken(object data)
-        {
-            Clipboard.Clear();
-            Clipboard.SetText(Token);
         }
 
         private void Addpassword(object data)
