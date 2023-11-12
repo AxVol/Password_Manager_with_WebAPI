@@ -49,8 +49,23 @@
                      Style="{StaticResource TextBox}"
                      Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}">
             </TextBox>
+            <PasswordBox
+                x:Name="PasswordBox"
+                Margin="0,75,5,50"
+                Style="{StaticResource PasswordBox}">
+            </PasswordBox>
+            <Button
+                Command="{Binding ShowPasswordCommand}"
+                CommandParameter="{Binding ElementName=PasswordBox}"
+                Margin="370,20,0,0"
+                Style="{StaticResource ImageButton}">
+                <Button.Background>
+                    <ImageBrush ImageSource="{Binding HiddenImage}"/>
+                </Button.Background>
+            </Button>
             <Button Content="Войти"
                     Command="{Binding LoginCommand}"
+                    CommandParameter="{Binding ElementName=PasswordBox}"
                     Style="{StaticResource Button}"
                     IsEnabled="{Binding EnableButton}"
                     Margin="-180,120,0,0"/>

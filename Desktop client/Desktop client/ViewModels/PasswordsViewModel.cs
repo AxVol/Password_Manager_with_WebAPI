@@ -97,22 +97,5 @@ namespace Desktop_client.ViewModels
 
             pageService.ChangePage(new LoginPage());
         }
-
-        private BitmapSource ConvertImage(string path)
-        {
-            Bitmap bitmap = (Bitmap)Bitmap.FromFile($"{path}", true);
-            BitmapSource bitmapSource = BitmapToBitmapSource(bitmap);
-
-            return bitmapSource;
-        }
-
-        private BitmapSource BitmapToBitmapSource(Bitmap source)
-        {
-            return System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-                          source.GetHbitmap(),
-                          IntPtr.Zero,
-                          Int32Rect.Empty,
-                          BitmapSizeOptions.FromEmptyOptions());
-        }
     }
 }

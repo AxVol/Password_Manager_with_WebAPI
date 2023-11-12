@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Desktop_client.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,19 @@ namespace Desktop_client.Views
         public AddPassword()
         {
             InitializeComponent();
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            AddPasswordViewModel viewModel = DataContext as AddPasswordViewModel;
+
+            PasswordBox.Password = viewModel.Password;
+            viewModel.PasswordGeneratedEvent += PasswordGenerated;
+        }
+
+        private void PasswordGenerated(string password)
+        {
+            PasswordBox.Password = password;
         }
     }
 }

@@ -1,8 +1,12 @@
 ﻿using Desktop_client.Core;
 using Desktop_client.Models;
+using Desktop_client.Services;
 using Desktop_client.Services.Interfaces;
 using Desktop_client.Views;
+using System;
 using System.Linq;
+using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace Desktop_client.ViewModels
 {
@@ -16,10 +20,23 @@ namespace Desktop_client.ViewModels
         public string Service { get; set; }
         public string Login { get; set; }
         public string Password { get; set; }
+        public BitmapSource HiddenImage
+        {
+            get
+            {
+                BitmapSource image = ImageConverter.ConvertImage("image\\hiden.png");
+
+                return image;
+            }
+        }
 
         public Commands SendPassword { get; set; }
         public Commands GeneratePassword { get; set; }
         public Commands Back { get; set; }
+        public Commands ShowPasswordCommand { get; set; }
+
+        public delegate void PasswordGeneratedHandler(string password);
+        public event PasswordGeneratedHandler PasswordGeneratedEvent;
 
         public AddPasswordViewModel(IPasswordService password, IPageService page, IUserManager manager) 
         {
@@ -30,6 +47,7 @@ namespace Desktop_client.ViewModels
             SendPassword = new Commands(Send);
             GeneratePassword = new Commands(PasswordGenerator);
             Back = new Commands(BackToPasswords);
+            ShowPasswordCommand = new Commands(ShowPassword);
 
             if (pageService.PasswordPageStatus == "Update")
             {
@@ -39,6 +57,22 @@ namespace Desktop_client.ViewModels
             }
         }
 
+        private async void ShowPassword(object data)
+        {
+            PasswordBox passwordBox = data as PasswordBox;
+
+            if (passwordBox.Visibility == System.Windows.Visibility.Visible)
+            {
+                Password = passwordBox.Password;
+                passwordBox.Visibility = System.Windows.Visibility.Hidden;
+
+                return;
+            }
+
+            passwordBox.Password = Password;
+            passwordBox.Visibility = System.Windows.Visibility.Visible;
+        }
+
         private async void PasswordGenerator(object data)
         {
             IsEnabled = false;
@@ -46,6 +80,7 @@ namespace Desktop_client.ViewModels
 
             Password = pass;
             IsEnabled = true;
+            PasswordGeneratedEvent?.Invoke(pass);
         }
 
         private void BackToPasswords(object data)
