@@ -7,6 +7,8 @@ using System.Drawing;
 using System.Collections.ObjectModel;
 using Desktop_client.Models;
 using System.Linq;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace Desktop_client.ViewModels
 {
@@ -18,6 +20,7 @@ namespace Desktop_client.ViewModels
 
         public ObservableCollection<Password> Passwords { get; private set; }
         public bool IsEnabled { get; set; } = true;
+        public bool PopupIsOpen { get; set; } = false;
 
         public Commands LogoutCommand { get; set; }
         public Commands AddPasswordCommand { get; set; }
@@ -25,6 +28,7 @@ namespace Desktop_client.ViewModels
         public Commands UpdatePasswordCommand { get; set; }
         public Commands DeletePasswordCommand { get; set; }
         public Commands SwitchPasswordVisibilityCommand { get; set; }
+        public Commands CopyInBufferCommand { get; set; }
 
         public PasswordsViewModel(IPageService page, IUserManager manager, IPasswordService password) 
         {
@@ -43,6 +47,37 @@ namespace Desktop_client.ViewModels
             UpdatePasswordCommand = new Commands(UpdatePassword);
             DeletePasswordCommand = new Commands(DeletePassword);
             SwitchPasswordVisibilityCommand = new Commands(SwitchPasswordVisibility);
+            CopyInBufferCommand = new Commands(CopyInBuffer);
+        }
+
+        private void CopyInBuffer(object data)
+        {
+            string copy = (string)data;
+
+            Clipboard.Clear();
+            Clipboard.SetText(copy);
+
+            ShowPopup();
+        }
+
+        private void ShowPopup()
+        {
+            PopupIsOpen = true;
+
+            DispatcherTimer timer = new DispatcherTimer()
+            {
+                Interval = TimeSpan.FromSeconds(5)
+            };
+
+            timer.Tick += delegate (object? sender, EventArgs e)
+            {
+                ((DispatcherTimer)timer).Stop();
+
+                if (PopupIsOpen)
+                    PopupIsOpen = false;
+            };
+
+            timer.Start();
         }
 
         private void SwitchPasswordVisibility(object data)
