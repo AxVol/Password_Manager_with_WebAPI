@@ -77,7 +77,7 @@ namespace Desktop_client.Services.Implementations
         public async Task<string> UpdateUserToken(string token)
         {
             using var response = await httpClient.PutAsync($"https://localhost:7125/api/User/UpdateToken?secretToken={token}", null);   
-            string backToken = await response.Content.ReadAsStringAsync(); //{"value":"NTUwY2ExODUtODMwZi00Mjc3LWJmYjAtYTc3ZGZiMjY2ZDdh"}
+            string backToken = await response.Content.ReadAsStringAsync();
 
             var sb = new StringBuilder(backToken);
             sb.Remove(0, 10);

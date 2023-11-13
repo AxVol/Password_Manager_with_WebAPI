@@ -1,7 +1,6 @@
 ﻿using Desktop_client.Core;
 using Desktop_client.Services.Interfaces;
 using Desktop_client.Views;
-using System.Windows;
 using System;
 using System.Windows.Media.Imaging;
 using System.Drawing;
@@ -15,16 +14,17 @@ namespace Desktop_client.ViewModels
     {
         private readonly IPageService pageService;
         private readonly IPasswordService passwordService;
-        private IUserManager userManager;
+        private readonly IUserManager userManager;
 
         public ObservableCollection<Password> Passwords { get; private set; }
         public bool IsEnabled { get; set; } = true;
 
-        public Commands LogOut { get; set; }
-        public Commands AddPassword { get; set; }
-        public Commands UpdateToken { get; set; }
-        public Commands Update { get; set; }
-        public Commands Delete { get; set; }
+        public Commands LogoutCommand { get; set; }
+        public Commands AddPasswordCommand { get; set; }
+        public Commands UpdateTokenCommand { get; set; }
+        public Commands UpdatePasswordCommand { get; set; }
+        public Commands DeletePasswordCommand { get; set; }
+        public Commands SwitchPasswordVisibilityCommand { get; set; }
 
         public PasswordsViewModel(IPageService page, IUserManager manager, IPasswordService password) 
         {
@@ -37,17 +37,34 @@ namespace Desktop_client.ViewModels
                 Passwords = userManager.passwords;
             }
 
-            LogOut = new Commands(Logout);
-            AddPassword = new Commands(Addpassword);
-            UpdateToken = new Commands(TokenUpdate);
-            Update = new Commands(UpdatePassword);
-            Delete = new Commands(DeletePassword);
+            LogoutCommand = new Commands(Logout);
+            AddPasswordCommand = new Commands(AddPassword);
+            UpdateTokenCommand = new Commands(UpdateToken);
+            UpdatePasswordCommand = new Commands(UpdatePassword);
+            DeletePasswordCommand = new Commands(DeletePassword);
+            SwitchPasswordVisibilityCommand = new Commands(SwitchPasswordVisibility);
+        }
+
+        private void SwitchPasswordVisibility(object data)
+        {
+            int id = Convert.ToInt32(data);
+            Password password = Passwords.First(p => p.Id == id);
+
+            if (password.HiddenPasswordStatus == System.Windows.Visibility.Hidden)
+            {
+                password.HiddenPasswordStatus = System.Windows.Visibility.Visible;
+                password.PasswordStatus = System.Windows.Visibility.Hidden;
+            }
+            else
+            {
+                password.HiddenPasswordStatus = System.Windows.Visibility.Hidden;
+                password.PasswordStatus = System.Windows.Visibility.Visible;
+            }
         }
 
         private void UpdatePassword(object data)
         {
             int id = Convert.ToInt32(data);
-
             Password password = Passwords.First(p => p.Id == id);
 
             pageService.PasswordPageStatus = "Update";
@@ -59,7 +76,6 @@ namespace Desktop_client.ViewModels
         {
             IsEnabled = false;
             int id = Convert.ToInt32(data);
-
             Password password = Passwords.First(p => p.Id == id);
 
             PasswordSendModel sendModel = new PasswordSendModel()
@@ -77,14 +93,14 @@ namespace Desktop_client.ViewModels
             pageService.ChangePage(new PasswordsPage());
         }
 
-        private async void TokenUpdate(object data)
+        private async void UpdateToken(object data)
         {
             string token = await passwordService.UpdateUserToken(userManager.user.SecretToken);
 
             userManager.user.SecretToken = token;
         }
 
-        private void Addpassword(object data)
+        private void AddPassword(object data)
         {
             pageService.PasswordPageStatus = "Add";
             pageService.ChangePage(new AddPassword());

@@ -12,15 +12,11 @@ namespace Desktop_client.ViewModels
         private readonly IPageService pageService;
         private readonly IConnectionService connectionService;
 
-        public Commands LoginCommand { get; set; }
-        public Commands RegisterCommand { get; set; }
-        public Commands ShowPasswordCommand { get; set; }
-
         public string Login { get; set; }
         public string Password { get; set; }
         public string ErrorMessage { get; set; }
         public bool EnableButton { get; set; } = true;
-        public BitmapSource HiddenImage 
+        public BitmapSource HiddenImage
         {
             get
             {
@@ -29,6 +25,10 @@ namespace Desktop_client.ViewModels
                 return image;
             }
         }
+
+        public Commands LoginCommand { get; set; }
+        public Commands RegisterCommand { get; set; }
+        public Commands ShowPasswordCommand { get; set; }
 
         public LoginViewModel(IPageService page, IConnectionService connection)
         {
@@ -58,19 +58,15 @@ namespace Desktop_client.ViewModels
 
         private async void LoginUser(object data)
         {
+            EnableButton = false;
+
             PasswordBox passwordBox = data as PasswordBox;
 
             if (passwordBox.Visibility == System.Windows.Visibility.Visible)
                 Password = passwordBox.Password;
 
-            if ((Login == null || Password == null)
-                || (Login == string.Empty || Password == string.Empty))
+            if (CanLogin())
             {
-                ErrorMessage = "Не все поля заполены";
-            }
-            else
-            {
-                EnableButton = false;
                 string response = await connectionService.Login(Login, Password);
 
                 if (response == "Успешно")
@@ -79,11 +75,26 @@ namespace Desktop_client.ViewModels
 
                     return;
                 }
-
-                EnableButton = true;
                 ErrorMessage = response;
             }
+
+            EnableButton = true;
+            ErrorMessage ??= "Непредвиденная ошибка";
         }
+
+        private bool CanLogin()
+        {
+            if ((Login == null || Password == null)
+               || (Login == string.Empty || Password == string.Empty))
+            {
+                ErrorMessage = "Не все поля заполены";
+
+                return false;
+            }
+
+            return true;
+        }
+
         private void Register(object data)
         {
             pageService.ChangePage(new RegisterPage());

@@ -12,8 +12,8 @@ namespace Desktop_client.ViewModels
         private readonly IConnectionService connectionService;
         private readonly IPageService pageService;
 
-        public Commands Register { get; set; }
-        public Commands BackToLogin { get; set; }
+        public Commands RegisterCommand { get; set; }
+        public Commands BackToLoginCommand { get; set; }
 
         public string ErrorMessage { get; set; }
         public string Login { get; set; }
@@ -27,31 +27,60 @@ namespace Desktop_client.ViewModels
             connectionService = connection;
             pageService = page;
 
-            Register = new Commands(Registration);
-            BackToLogin = new Commands(BackLogin);
+            RegisterCommand = new Commands(Registration);
+            BackToLoginCommand = new Commands(BackToLogin);
         }
 
-        private void BackLogin(object data)
+        private void BackToLogin(object data)
         {
             pageService.ChangePage(new LoginPage());
         }
 
         private async void Registration(object data)
         {
-            char[] specSymbols = new char[]
-            {
-                '?', '!', '@', '#', '$', '%', '&' 
-            };
-            EmailAddressAttribute emailValidate = new EmailAddressAttribute();
+            EnableButton = false;
 
-            if (Login == null || Email == null || Password == null || RepeatPassword == null)
+            if (CanRegister())
             {
-                ErrorMessage = "Заполните все поля";
+                RegistrationModel user = new RegistrationModel()
+                {
+                    Login = Login,
+                    Email = Email,
+                    Password = Password,
+                };
+
+                string response = await connectionService.Register(user);
+
+                if (response == "Успешно")
+                    pageService.ChangePage(new PasswordsPage());
+
+                ErrorMessage = response;
+                EnableButton = true;
 
                 return;
             }
 
-            EnableButton = false;
+            EnableButton = true;
+            ErrorMessage ??= "Не предвиденная ошибка";
+
+            return;
+        }
+
+        private bool CanRegister()
+        {
+            if (Login == null || Email == null || Password == null || RepeatPassword == null)
+            {
+                ErrorMessage = "Заполните все поля";
+
+                return false;
+            }
+
+            char[] specSymbols = new char[]
+            {
+                '?', '!', '@', '#', '$', '%', '&'
+            };
+
+            EmailAddressAttribute emailValidate = new EmailAddressAttribute();
 
             if ((Login != string.Empty)
                 || (Email != string.Empty)
@@ -67,40 +96,25 @@ namespace Desktop_client.ViewModels
                     {
                         if (emailValidate.IsValid(Email))
                         {
-                            RegistrationModel user = new RegistrationModel()
-                            {
-                                Login = Login,
-                                Email = Email,
-                                Password = Password,
-                            };
-
-                            string response = await connectionService.Register(user);
-
-                            if (response == "Успешно")
-                                pageService.ChangePage(new PasswordsPage());
-
-                            ErrorMessage = response;
-                            EnableButton = true;
-                            return;
+                            return true;
                         }
 
                         ErrorMessage = "Некоректная почта";
-                        EnableButton = true;
-                        return;
+
+                        return false;
                     }
 
                     ErrorMessage = "Пароль не достаточно сложный";
-                    EnableButton = true;
-                    return;
+
+                    return false;
                 }
 
                 ErrorMessage = "Пароли не совпадают";
-                EnableButton = true;
-                return;
+
+                return false;
             }
 
-            ErrorMessage = "Заполните все поля";
-            EnableButton = true;
+            return false;
         }
     }
 }

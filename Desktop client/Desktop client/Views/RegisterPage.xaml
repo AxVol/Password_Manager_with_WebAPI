@@ -2,8 +2,10 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
       xmlns:local="clr-namespace:Desktop_client.Views"
+      xmlns:behavior="clr-namespace:Desktop_client.Behaviors"
       mc:Ignorable="d" 
       d:DesignHeight="720" d:DesignWidth="1220"
       Title="RegisterPage"
@@ -70,14 +72,20 @@
                      Margin="100,-20,5,50"
                      Text="{Binding Email}">
             </TextBox>
-            <TextBox Style="{StaticResource TextBox}" 
-                     Margin="100,60,5,50"
-                     Text="{Binding Password}">
-            </TextBox>
-            <TextBox Style="{StaticResource TextBox}" 
-                     Margin="100,140,5,50"
-                     Text="{Binding RepeatPassword}">
-            </TextBox>
+            <PasswordBox
+                Margin="100,60,5,50"
+                Style="{StaticResource PasswordBox}">
+                <i:Interaction.Behaviors>
+                    <behavior:PasswordBehavior Password="{Binding Password}"/>
+                </i:Interaction.Behaviors>
+            </PasswordBox>
+            <PasswordBox
+                Margin="100,140,5,50"
+                Style="{StaticResource PasswordBox}">
+                <i:Interaction.Behaviors>
+                    <behavior:PasswordBehavior Password="{Binding RepeatPassword}"/>
+                </i:Interaction.Behaviors>
+            </PasswordBox>
             <Button Content="Зарегистрироваться"
                     Command="{Binding Register}"
                     Style="{StaticResource Button}"

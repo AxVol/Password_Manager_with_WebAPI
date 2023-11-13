@@ -20,6 +20,8 @@ namespace Desktop_client.ViewModels
         public string Service { get; set; }
         public string Login { get; set; }
         public string Password { get; set; }
+        public string Title { get; set; } = "Добавление пароля";
+        public string ButtonText { get; set; } = "Добавить пароль";
         public BitmapSource HiddenImage
         {
             get
@@ -30,9 +32,9 @@ namespace Desktop_client.ViewModels
             }
         }
 
-        public Commands SendPassword { get; set; }
-        public Commands GeneratePassword { get; set; }
-        public Commands Back { get; set; }
+        public Commands SendPasswordCommand { get; set; }
+        public Commands GeneratePasswordCommand { get; set; }
+        public Commands BackCommand { get; set; }
         public Commands ShowPasswordCommand { get; set; }
 
         public delegate void PasswordGeneratedHandler(string password);
@@ -44,9 +46,9 @@ namespace Desktop_client.ViewModels
             passwordService = password;
             pageService = page;
 
-            SendPassword = new Commands(Send);
-            GeneratePassword = new Commands(PasswordGenerator);
-            Back = new Commands(BackToPasswords);
+            SendPasswordCommand = new Commands(SendPassword);
+            GeneratePasswordCommand = new Commands(GeneratePassword);
+            BackCommand = new Commands(Back);
             ShowPasswordCommand = new Commands(ShowPassword);
 
             if (pageService.PasswordPageStatus == "Update")
@@ -54,6 +56,8 @@ namespace Desktop_client.ViewModels
                 Service = pageService.password.Service;
                 Login = pageService.password.Login;
                 Password = pageService.password.PassWord;
+                ButtonText = "Изменить пароль";
+                Title = "Изменение пароля";
             }
         }
 
@@ -73,7 +77,7 @@ namespace Desktop_client.ViewModels
             passwordBox.Visibility = System.Windows.Visibility.Visible;
         }
 
-        private async void PasswordGenerator(object data)
+        private async void GeneratePassword(object data)
         {
             IsEnabled = false;
             string pass = await passwordService.GenerateStrongPassword();
@@ -83,12 +87,12 @@ namespace Desktop_client.ViewModels
             PasswordGeneratedEvent?.Invoke(pass);
         }
 
-        private void BackToPasswords(object data)
+        private void Back(object data)
         {
             pageService.ChangePage(new PasswordsPage());
         }
 
-        private async void Send(object data)
+        private async void SendPassword(object data)
         {
             IsEnabled = false;
             int id = default;
