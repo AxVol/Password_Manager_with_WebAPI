@@ -41,14 +41,29 @@ namespace Desktop_client.Services.Implementations
         public async Task<string> GenerateStrongPassword()
         {
             string password = string.Empty;
-            Random r = new Random();
+            Random random = new Random();
+            int lenChar = 9;
+            int countSpecSymbols = 2;
 
-            while (password.Length < 16)
+            char[] specSymbols = new char[]
             {
-                char c = (char)r.Next(33, 125);
+                '?', '!', '@', '#', '$', '%', '&'
+            };
+
+            while (password.Length < lenChar)
+            {
+                char c = (char)random.Next(33, 125);
 
                 if (char.IsLetterOrDigit(c))
                     password += c;
+            }
+
+            for (int i = 0; i < countSpecSymbols; i++)
+            {
+                char specSymbol = specSymbols[random.Next(specSymbols.Length)];
+                int placeInPassword = random.Next(0, password.Length);
+
+                password = password.Insert(placeInPassword, specSymbol.ToString());
             }
 
             return password;

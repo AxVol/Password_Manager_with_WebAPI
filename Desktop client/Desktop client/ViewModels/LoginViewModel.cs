@@ -38,6 +38,12 @@ namespace Desktop_client.ViewModels
             LoginCommand = new Commands(LoginUser);
             RegisterCommand = new Commands(Register);
             ShowPasswordCommand = new Commands(ShowPassword);
+
+            if (!connection.HasEthernet())
+            {
+                ErrorMessage = "Отсутствует интернет";
+                EnableButton = false;
+            }
         }
 
         private async void ShowPassword(object data)

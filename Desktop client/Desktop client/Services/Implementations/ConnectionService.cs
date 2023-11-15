@@ -20,6 +20,22 @@ namespace Desktop_client.Services.Implementations
             passwordService = pass;
         }
 
+        public bool HasEthernet()
+        {
+            using var response = httpClient.GetAsync("https://www.google.com");
+
+            try
+            {
+                HttpStatusCode result = response.Result.StatusCode;
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public async Task<string> Login(string login, string password)
         {
             LoginModel loginModel = new LoginModel()

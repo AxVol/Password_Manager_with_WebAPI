@@ -7,5 +7,6 @@ namespace Desktop_client.Services.Interfaces
     {
         public Task<string> Login(string login, string password);
         public Task<string> Register(RegistrationModel model);
+        public bool HasEthernet();
     }
 }
