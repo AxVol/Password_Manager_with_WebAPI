@@ -55,11 +55,7 @@ namespace WebApi.Service
         {
             try
             {
-                string hashPassword = cryptography.GetPasswordHash(model.Password);
-                User? user = repository.GetAll().FirstOrDefault(
-                    u => u.Email == model.Email || u.Login == model.Login);
-
-                if (user != null)
+                if (UserExists(model))
                 {
                     return new Response<User>()
                     {
@@ -69,7 +65,8 @@ namespace WebApi.Service
                     };
                 }
 
-                user = new User()
+                string hashPassword = cryptography.GetPasswordHash(model.Password);
+                User user = new User()
                 {
                     Login = model.Login,
                     Email = model.Email,
@@ -105,8 +102,8 @@ namespace WebApi.Service
             try
             {
                 User user = repository.GetAll().First(u => u.SecretToken == token);
-
                 user.SecretToken = newToken;
+
                 await repository.Update(user);
 
                 return new Response<string>()
@@ -126,7 +123,17 @@ namespace WebApi.Service
                     Status = Domain.Enum.RequestStatus.Failed
                 };
             }
-            
+        }
+
+        private bool UserExists(RegisterViewModel model)
+        {
+            User? user = repository.GetAll().FirstOrDefault(
+                u => u.Email == model.Email || u.Login == model.Login);
+
+            if (user == null)
+                return false;
+            else
+                return true;
         }
     }
 }

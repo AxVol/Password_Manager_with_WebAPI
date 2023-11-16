@@ -33,7 +33,7 @@
                         Margin="0,0,960,0"
                         Background="#1D1E33"
                         Content="Назад"
-                        Command="{Binding BackToLogin}"
+                        Command="{Binding BackToLoginCommand}"
                         IsEnabled="{Binding EnableButton}"/>
                 </Grid>
             </Border>
@@ -87,7 +87,7 @@
                 </i:Interaction.Behaviors>
             </PasswordBox>
             <Button Content="Зарегистрироваться"
-                    Command="{Binding Register}"
+                    Command="{Binding RegisterCommand}"
                     Style="{StaticResource Button}"
                     Height="35"
                     Width="220"

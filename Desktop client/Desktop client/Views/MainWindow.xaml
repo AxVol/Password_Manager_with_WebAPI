@@ -9,7 +9,8 @@
         DataContext="{Binding MainViewModel, Source={StaticResource DIcontainer}}"
         Title="Password Manager" 
         Height="720" 
-        Width="1220">
+        Width="1220"
+        ResizeMode="NoResize">
     <Grid>
         <Frame Content="{Binding CurrentView}" NavigationUIVisibility="Hidden"/>
     </Grid>
