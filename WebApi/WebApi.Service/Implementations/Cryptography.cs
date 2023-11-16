@@ -1,36 +1,36 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using WebApi.Service.Interfaces;
+using WebApi.Domain.Extensions;
+using WebApi.Domain.Entity;
 
 namespace WebApi.Service.Implementations
 {
     public class Cryptography : ICryptography
     {
-        private readonly ICryptoTransform encryptor;
-        private readonly ICryptoTransform decryptor;
+        private readonly Aes aes;
 
         public Cryptography()
         {
-            Aes aes = Aes.Create();
-
+            aes = Aes.Create();
             aes.Key = File.ReadAllBytes("Keys/keys.txt");
-            aes.IV = File.ReadAllBytes("Keys/IV.txt");
-
-            encryptor = aes.CreateEncryptor();
-            decryptor = aes.CreateDecryptor();
+            aes.Mode = CipherMode.CBC;
+            aes.Padding = PaddingMode.PKCS7;
         }
 
-        public string DecryptPassword(string cryptedPassword)
+        public string DecryptPassword(string cryptedPassword, long userId)
         {
             byte[] passByte = Convert.FromBase64String(cryptedPassword);
+            ICryptoTransform decryptor = GetDecryptor(userId);
             byte[] decryptedData = decryptor.TransformFinalBlock(passByte, 0, passByte.Length);
 
             return Encoding.Default.GetString(decryptedData);
         }
 
-        public string EncryptPassword(string password)
+        public string EncryptPassword(string password, long userId)
         {
             byte[] cryptPassword = Encoding.Default.GetBytes(password);
+            ICryptoTransform encryptor = GetEncryptor(userId);
             byte[] encryptedPass = encryptor.TransformFinalBlock(cryptPassword, 0, cryptPassword.Length);
 
             return Convert.ToBase64String(encryptedPass, 0, encryptedPass.Length);
@@ -42,6 +42,28 @@ namespace WebApi.Service.Implementations
             var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(password));
 
             return Convert.ToBase64String(hash);
+        }
+
+        private void SetIV(long vector)
+        {
+            byte[] iv = vector.ToBigEndianBytes();
+            iv = new byte[8].Concat(iv).ToArray();
+
+            aes.IV = iv;
+        }
+
+        private ICryptoTransform GetEncryptor(long vector)
+        {
+            SetIV(vector);
+
+            return aes.CreateEncryptor();
+        }
+
+        private ICryptoTransform GetDecryptor(long vector)
+        {
+            SetIV(vector);
+
+            return aes.CreateDecryptor();
         }
     }
 }

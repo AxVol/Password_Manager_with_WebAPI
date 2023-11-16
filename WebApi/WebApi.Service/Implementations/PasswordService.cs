@@ -29,7 +29,7 @@ namespace WebApi.Service.Implementations
             try
             {
                 User user = userRepository.GetAll().First(u => u.SecretToken == model.SecretToken);
-                string cypherPass = cryptography.EncryptPassword(model.Password);
+                string cypherPass = cryptography.EncryptPassword(model.Password, user.Id);
 
                 Password password = new Password()
                 {
@@ -109,7 +109,7 @@ namespace WebApi.Service.Implementations
 
                 foreach (Password password in passwords)
                 {
-                    string pass = cryptography.DecryptPassword(password.PassWord);
+                    string pass = cryptography.DecryptPassword(password.PassWord, password.User.Id);
                     password.PassWord = pass;
 
                     PasswordResponse responseModel = new PasswordResponse()
@@ -154,7 +154,7 @@ namespace WebApi.Service.Implementations
                 };
             }
 
-            string cypherPass = cryptography.EncryptPassword(model.Password);
+            string cypherPass = cryptography.EncryptPassword(model.Password, password.User.Id);
             password.LoginService = model.Login;
             password.PassWord = cypherPass;
             password.PassService = model.Service;
