@@ -1,6 +1,6 @@
 ﻿namespace WebApi.Domain.Extensions
 {
-    public static class longExtension
+    public static class LongExtension
     {
         public static byte[] ToBigEndianBytes(this long segmentIndex)
         {

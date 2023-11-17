@@ -30,7 +30,7 @@ namespace WebApi.Service
                 Value = null
             };
 
-            string passwordHash = cryptography.GetPasswordHash(model.Password);
+            string passwordHash = cryptography.GetPasswordHash(model.Password, model.Login);
             User? user = repository.GetAll().FirstOrDefault(
                 u => u.Email == model.Login || u.Login == model.Login);
 
@@ -65,7 +65,7 @@ namespace WebApi.Service
                     };
                 }
 
-                string hashPassword = cryptography.GetPasswordHash(model.Password);
+                string hashPassword = cryptography.GetPasswordHash(model.Password, model.Login);
                 User user = new User()
                 {
                     Login = model.Login,

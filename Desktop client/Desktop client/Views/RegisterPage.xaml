@@ -76,14 +76,14 @@
                 Margin="100,60,5,50"
                 Style="{StaticResource PasswordBox}">
                 <i:Interaction.Behaviors>
-                    <behavior:PasswordBehavior Password="{Binding Password}"/>
+                    <behavior:PasswordBehavior Password="{Binding Password, Mode=TwoWay}"/>
                 </i:Interaction.Behaviors>
             </PasswordBox>
             <PasswordBox
                 Margin="100,140,5,50"
                 Style="{StaticResource PasswordBox}">
                 <i:Interaction.Behaviors>
-                    <behavior:PasswordBehavior Password="{Binding RepeatPassword}"/>
+                    <behavior:PasswordBehavior Password="{Binding RepeatPassword, Mode=TwoWay}"/>
                 </i:Interaction.Behaviors>
             </PasswordBox>
             <Button Content="Зарегистрироваться"

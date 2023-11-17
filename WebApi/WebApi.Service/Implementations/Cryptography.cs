@@ -2,7 +2,6 @@
 using System.Text;
 using WebApi.Service.Interfaces;
 using WebApi.Domain.Extensions;
-using WebApi.Domain.Entity;
 
 namespace WebApi.Service.Implementations
 {
@@ -36,12 +35,25 @@ namespace WebApi.Service.Implementations
             return Convert.ToBase64String(encryptedPass, 0, encryptedPass.Length);
         }
 
-        public string GetPasswordHash(string password)
+        public string GetPasswordHash(string password, string salt)
         {
-            var md5 = MD5.Create();
-            var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(password));
+            byte[] passwordBytes = Encoding.Default.GetBytes(password);
+            byte[] saltBytes = Encoding.Default.GetBytes(salt);
+            byte[] saltPassword = new byte[passwordBytes.Length + saltBytes.Length];
 
-            return Convert.ToBase64String(hash);
+            Array.Copy(passwordBytes, 0, saltPassword, 0, passwordBytes.Length);
+            Array.Copy(saltBytes, 0, saltPassword, 0, saltBytes.Length);
+
+            using (SHA512 sha512 = SHA512.Create())
+            {
+                byte[] hashBytes = sha512.ComputeHash(saltPassword);  
+                StringBuilder hash = new StringBuilder(128);
+
+                foreach (byte b in hashBytes)
+                    hash.Append(b.ToString("X2"));
+
+                return hash.ToString();
+            }
         }
 
         private void SetIV(long vector)
