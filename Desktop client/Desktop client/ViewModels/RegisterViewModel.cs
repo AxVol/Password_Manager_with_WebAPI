@@ -1,42 +1,46 @@
-﻿using Desktop_client.Core;
-using Desktop_client.Services.Interfaces;
+﻿using Desktop_client.Services.Interfaces;
 using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using Desktop_client.Models;
 using Desktop_client.Views;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using System.Threading.Tasks;
 
 namespace Desktop_client.ViewModels
 {
-    public class RegisterViewModel : ObservableObject
+    public partial class RegisterViewModel : ObservableObject
     {
         private readonly IConnectionService connectionService;
         private readonly IPageService pageService;
 
-        public Commands RegisterCommand { get; set; }
-        public Commands BackToLoginCommand { get; set; }
-
-        public string ErrorMessage { get; set; }
-        public string Login { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
-        public string RepeatPassword { get; set; }
-        public bool EnableButton { get; set; } = true;
+        [ObservableProperty]
+        private string errorMessage;
+        [ObservableProperty]
+        private string login;
+        [ObservableProperty]
+        private string email;
+        [ObservableProperty]
+        private string password;
+        [ObservableProperty]
+        private string repeatPassword;
+        [ObservableProperty]
+        private bool enableButton = true;
 
         public RegisterViewModel(IConnectionService connection, IPageService page) 
         {
             connectionService = connection;
             pageService = page;
-
-            RegisterCommand = new Commands(Registration);
-            BackToLoginCommand = new Commands(BackToLogin);
         }
 
+        [RelayCommand]
         private void BackToLogin(object data)
         {
             pageService.ChangePage(new LoginPage());
         }
 
-        private async void Registration(object data)
+        [RelayCommand]
+        private async Task Register(object data)
         {
             EnableButton = false;
 

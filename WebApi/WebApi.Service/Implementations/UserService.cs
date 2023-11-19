@@ -30,7 +30,6 @@ namespace WebApi.Service
                 Value = null
             };
 
-            string passwordHash = cryptography.GetPasswordHash(model.Password, model.Login);
             User? user = repository.GetAll().FirstOrDefault(
                 u => u.Email == model.Login || u.Login == model.Login);
 
@@ -38,7 +37,10 @@ namespace WebApi.Service
             {
                 return failedResponse;
             }
-            else if (passwordHash != user.Password)
+
+            string passwordHash = cryptography.GetPasswordHash(model.Password, user.Login);
+
+            if (passwordHash != user.Password)
             {
                 return failedResponse;
             }

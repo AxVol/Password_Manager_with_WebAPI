@@ -41,15 +41,18 @@
             <TextBlock Text="Пароль"
                        Margin="300,260,0,0"
                        Style="{StaticResource TextBlock}"/>
-            <TextBox Style="{StaticResource TextBox}" 
+            <TextBox Style="{StaticResource TextBox}"
+                     TabIndex="0"
                      Margin="0,0,5,50"
                      Text="{Binding Login, UpdateSourceTrigger=PropertyChanged}">
             </TextBox>
             <TextBox Margin="0,75,5,50"
+                     TabIndex="2"
                      Style="{StaticResource TextBox}"
                      Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}">
             </TextBox>
             <PasswordBox
+                TabIndex="1"
                 x:Name="PasswordBox"
                 Margin="0,75,5,50"
                 Style="{StaticResource PasswordBox}">
@@ -64,7 +67,7 @@
                 </Button.Background>
             </Button>
             <Button Content="Войти"
-                    Command="{Binding LoginCommand}"
+                    Command="{Binding LoginUserCommand}"
                     CommandParameter="{Binding ElementName=PasswordBox}"
                     Style="{StaticResource Button}"
                     IsEnabled="{Binding EnableButton}"

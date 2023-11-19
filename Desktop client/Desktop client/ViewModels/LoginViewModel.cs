@@ -1,21 +1,28 @@
-﻿using Desktop_client.Core;
-using Desktop_client.Services;
+﻿using Desktop_client.Services;
 using Desktop_client.Services.Interfaces;
 using Desktop_client.Views;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using System.Threading.Tasks;
 
 namespace Desktop_client.ViewModels
 {
-    public class LoginViewModel : ObservableObject
+    public partial class LoginViewModel : ObservableObject
     {
         private readonly IPageService pageService;
         private readonly IConnectionService connectionService;
 
-        public string Login { get; set; }
-        public string Password { get; set; }
-        public string ErrorMessage { get; set; }
-        public bool EnableButton { get; set; } = true;
+        [ObservableProperty]
+        private string login;
+        [ObservableProperty]
+        private string password;
+        [ObservableProperty]
+        private string errorMessage;
+        [ObservableProperty]
+        private bool enableButton = true;
+
         public BitmapSource HiddenImage
         {
             get
@@ -26,18 +33,10 @@ namespace Desktop_client.ViewModels
             }
         }
 
-        public Commands LoginCommand { get; set; }
-        public Commands RegisterCommand { get; set; }
-        public Commands ShowPasswordCommand { get; set; }
-
         public LoginViewModel(IPageService page, IConnectionService connection)
         {
             pageService = page;
             connectionService = connection;
-
-            LoginCommand = new Commands(LoginUser);
-            RegisterCommand = new Commands(Register);
-            ShowPasswordCommand = new Commands(ShowPassword);
 
             if (!connection.HasEthernet())
             {
@@ -46,7 +45,14 @@ namespace Desktop_client.ViewModels
             }
         }
 
-        private async void ShowPassword(object data)
+        [RelayCommand]
+        private void Register(object data)
+        {
+            pageService.ChangePage(new RegisterPage());
+        }
+
+        [RelayCommand]
+        private async Task ShowPassword(object data)
         {
             PasswordBox passwordBox = data as PasswordBox;
 
@@ -62,7 +68,8 @@ namespace Desktop_client.ViewModels
             passwordBox.Visibility = System.Windows.Visibility.Visible;
         }
 
-        private async void LoginUser(object data)
+        [RelayCommand]
+        private async Task LoginUser(object data)
         {
             EnableButton = false;
 
@@ -99,11 +106,6 @@ namespace Desktop_client.ViewModels
             }
 
             return true;
-        }
-
-        private void Register(object data)
-        {
-            pageService.ChangePage(new RegisterPage());
         }
     }
 }

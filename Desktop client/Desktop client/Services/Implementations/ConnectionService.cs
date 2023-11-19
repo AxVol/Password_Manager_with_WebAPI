@@ -11,7 +11,7 @@ namespace Desktop_client.Services.Implementations
     {
         private readonly HttpClient httpClient;
         private readonly IPasswordService passwordService;
-        private IUserManager userManager;
+        private readonly IUserManager userManager;
 
         public ConnectionService(IHttpClientFactory httpFactory, IUserManager manager, IPasswordService pass) 
         {

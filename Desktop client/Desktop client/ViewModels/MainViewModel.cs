@@ -1,15 +1,16 @@
-﻿using Desktop_client.Core;
-using Desktop_client.Views;
+﻿using Desktop_client.Views;
 using Desktop_client.Services.Interfaces;
 using System.Windows.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Desktop_client.ViewModels
 {
-    public class MainViewModel : ObservableObject
+    public partial class MainViewModel : ObservableObject
     {
         private readonly IPageService pageService;
 
-        public Page CurrentView { get; set; }
+        [ObservableProperty]
+        private Page currentView;
 
         public MainViewModel(IPageService page) 
         {

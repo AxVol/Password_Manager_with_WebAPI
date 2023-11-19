@@ -1,27 +1,34 @@
-﻿using Desktop_client.Core;
-using Desktop_client.Models;
+﻿using Desktop_client.Models;
 using Desktop_client.Services;
 using Desktop_client.Services.Interfaces;
 using Desktop_client.Views;
-using System;
-using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using System.Threading.Tasks;
 
 namespace Desktop_client.ViewModels
 {
-    public class AddPasswordViewModel : ObservableObject
+    public partial class AddPasswordViewModel : ObservableObject
     {
         private readonly IPasswordService passwordService;
         private readonly IUserManager userManager;
         private readonly IPageService pageService;
 
-        public bool IsEnabled { get; set; } = true;
-        public string Service { get; set; }
-        public string Login { get; set; }
-        public string Password { get; set; }
-        public string Title { get; set; } = "Добавление пароля";
-        public string ButtonText { get; set; } = "Добавить пароль";
+        [ObservableProperty]
+        private string service;
+        [ObservableProperty]
+        private string login;
+        [ObservableProperty]
+        private string password;
+        [ObservableProperty]
+        private bool isEnabled = true;
+        [ObservableProperty]
+        private string title = "Добавление пароля";
+        [ObservableProperty]
+        private string buttonText = "Добавить пароль";
+
         public BitmapSource HiddenImage
         {
             get
@@ -32,11 +39,6 @@ namespace Desktop_client.ViewModels
             }
         }
 
-        public Commands SendPasswordCommand { get; set; }
-        public Commands GeneratePasswordCommand { get; set; }
-        public Commands BackCommand { get; set; }
-        public Commands ShowPasswordCommand { get; set; }
-
         public delegate void PasswordGeneratedHandler(string password);
         public event PasswordGeneratedHandler PasswordGeneratedEvent;
 
@@ -45,11 +47,6 @@ namespace Desktop_client.ViewModels
             userManager = manager;
             passwordService = password;
             pageService = page;
-
-            SendPasswordCommand = new Commands(SendPassword);
-            GeneratePasswordCommand = new Commands(GeneratePassword);
-            BackCommand = new Commands(Back);
-            ShowPasswordCommand = new Commands(ShowPassword);
 
             if (pageService.PasswordPageStatus == "Update")
             {
@@ -61,7 +58,8 @@ namespace Desktop_client.ViewModels
             }
         }
 
-        private async void ShowPassword(object data)
+        [RelayCommand]
+        private async Task ShowPassword(object data)
         {
             PasswordBox passwordBox = data as PasswordBox;
 
@@ -77,7 +75,8 @@ namespace Desktop_client.ViewModels
             passwordBox.Visibility = System.Windows.Visibility.Visible;
         }
 
-        private async void GeneratePassword(object data)
+        [RelayCommand]
+        private async Task GeneratePassword(object data)
         {
             IsEnabled = false;
             string pass = await passwordService.GenerateStrongPassword();
@@ -87,22 +86,27 @@ namespace Desktop_client.ViewModels
             PasswordGeneratedEvent?.Invoke(pass);
         }
 
+        [RelayCommand]
         private void Back(object data)
         {
             pageService.ChangePage(new PasswordsPage());
         }
 
-        private async void SendPassword(object data)
+        [RelayCommand]
+        private async Task SendPassword(object data)
         {
             IsEnabled = false;
-            int id = default;
+            Models.Password passWord = new Models.Password();
 
             if (pageService.password != null)
-                id = pageService.password.Id;
+                passWord.Id = pageService.password.Id;
 
+            passWord.PassWord = Password;
+            passWord.Service = Service;
+            passWord.Login = Login;
             PasswordSendModel password = new PasswordSendModel()
             {
-                Id = id,
+                Id = passWord.Id,
                 SecretToken = userManager.user.SecretToken,
                 Service = Service,
                 Login = Login,
@@ -113,13 +117,16 @@ namespace Desktop_client.ViewModels
             {
                 case "Add":
                     await passwordService.Create(password);
+                    await userManager.AddPassword(passWord);
+
                     break;
                 case "Update":
                     await passwordService.Update(password);
+                    await userManager.UpdatePassword(passWord);
+                    
                     break;
             }
 
-            userManager.passwords = await passwordService.GetAll(userManager.user.SecretToken);
             pageService.ChangePage(new PasswordsPage());
         }
     }
