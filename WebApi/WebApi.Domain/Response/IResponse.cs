@@ -4,9 +4,9 @@ namespace WebApi.Domain.Response
 {
     public interface IResponse<T>
     {
-        string Description { get;}
-        RequestStatus Status { get;}
-        T? Value { get;}
-        IEnumerable<T> Values { get;}
+        string Description { get; set; }
+        RequestStatus Status { get; set; }
+        T? Value { get; set; }
+        IEnumerable<T> Values { get; set; }
     }
 }

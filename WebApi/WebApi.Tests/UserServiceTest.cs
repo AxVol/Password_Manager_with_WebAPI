@@ -19,8 +19,27 @@ namespace WebApi.Tests
             ICryptography cryptography = new Cryptography();
             ILogger<UserService> logger = MockFactory<UserService>.GetLogger();
             IRepository<User> userRepository = MockFactory<UserService>.GetUserRepository();
+            IRepository<BlockedUser> blockedUserRepository = MockFactory<UserService>.GetBlockedUserRepository();
 
-            userService = new UserService(userRepository, logger, cryptography);
+            userService = new UserService(userRepository, logger, cryptography, blockedUserRepository);
+        }
+
+        [Fact]
+        public async void Blocked_user_login_test()
+        {
+            // Arrage
+            LoginViewModel viewModel = new LoginViewModel()
+            {
+                Login = "login3",
+                Password = "login3"
+            };
+
+            // Act
+            var response = await userService.Login(viewModel);
+
+            // Assert
+            Assert.Equal(Domain.Enum.RequestStatus.Failed, response.Status);
+            Assert.Equal("Вы были заблокированы", response.Description);
         }
 
         [Fact]

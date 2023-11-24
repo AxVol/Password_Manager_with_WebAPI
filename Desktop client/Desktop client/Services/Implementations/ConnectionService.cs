@@ -13,6 +13,9 @@ namespace Desktop_client.Services.Implementations
         private readonly IPasswordService passwordService;
         private readonly IUserManager userManager;
 
+        private int CountToBan { get; } = 3;
+        private int TryedToLogin { get; set; } = 0;
+
         public ConnectionService(IHttpClientFactory httpFactory, IUserManager manager, IPasswordService pass) 
         {
             httpClient = httpFactory.CreateClient();
@@ -50,6 +53,20 @@ namespace Desktop_client.Services.Implementations
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
                 Error? error = await response.Content.ReadFromJsonAsync<Error>();
+
+                if (long.TryParse(error.Description, out long id))
+                {
+                    if (TryedToLogin == CountToBan)
+                    {
+                        await BlockAccount(id);
+
+                        return "Вы были заблокированы за подозрительную активность";
+                    }
+
+                    TryedToLogin++;
+
+                    return "Неверный логин или пароль";
+                }
 
                 return error.Description;
             }
@@ -89,6 +106,13 @@ namespace Desktop_client.Services.Implementations
             }
 
             return "Не предвиденная ошибка";
+        }
+
+        private async Task BlockAccount(long id)
+        {
+            JsonContent json = JsonContent.Create(new { id });
+
+            await httpClient.PostAsync("https://localhost:7125/api/User/BlockAccount", json);
         }
     }
 }

@@ -10,15 +10,18 @@ namespace WebApi.Service
 {
     public class UserService : IUserService
     {
-        private readonly IRepository<User> repository;
+        private readonly IRepository<User> userRepository;
+        private readonly IRepository<BlockedUser> blockedRepository;
         private readonly ILogger<UserService> logger;
         private readonly ICryptography cryptography;
 
-        public UserService(IRepository<User> rep, ILogger<UserService> log, ICryptography crypt)
+        public UserService(IRepository<User> rep, ILogger<UserService> log, 
+            ICryptography crypt, IRepository<BlockedUser> block)
         {
-            repository = rep;
+            userRepository = rep;
             logger = log;
             cryptography = crypt;
+            blockedRepository = block;
         }
 
         public async Task<IResponse<User>> Login(LoginViewModel model)
@@ -30,7 +33,7 @@ namespace WebApi.Service
                 Value = null
             };
 
-            User? user = repository.GetAll().FirstOrDefault(
+            User? user = userRepository.GetAll().FirstOrDefault(
                 u => u.Email == model.Login || u.Login == model.Login);
 
             if (user == null)
@@ -38,10 +41,22 @@ namespace WebApi.Service
                 return failedResponse;
             }
 
+            BlockedUser? blockedUser = blockedRepository.GetAll().FirstOrDefault(u => u.user.Id == user.Id);
+
+            if (blockedUser is not null)
+            {
+                failedResponse.Description = "Вы были заблокированы";
+
+                return failedResponse;
+            }
+
             string passwordHash = cryptography.GetPasswordHash(model.Password, user.Login);
 
             if (passwordHash != user.Password)
             {
+                failedResponse.Description = "Неверный пароль";
+                failedResponse.Value = user;
+
                 return failedResponse;
             }
 
@@ -76,7 +91,7 @@ namespace WebApi.Service
                     SecretToken = Convert.ToBase64String(Encoding.UTF8.GetBytes(Guid.NewGuid().ToString()))
                 };
 
-                await repository.Create(user);
+                await userRepository.Create(user);
 
                 return new Response<User>()
                 {
@@ -103,10 +118,10 @@ namespace WebApi.Service
 
             try
             {
-                User user = repository.GetAll().First(u => u.SecretToken == token);
+                User user = userRepository.GetAll().First(u => u.SecretToken == token);
                 user.SecretToken = newToken;
 
-                await repository.Update(user);
+                await userRepository.Update(user);
 
                 return new Response<string>()
                 {
@@ -127,9 +142,28 @@ namespace WebApi.Service
             }
         }
 
+        public async Task BlockAccount(long id)
+        {
+            User? user = userRepository.GetAll().FirstOrDefault(u => u.Id == id);
+
+            if (user is null)
+            {
+                logger.LogError($"Error user to block is null");
+                return;
+            }
+
+            BlockedUser blockedUser = new BlockedUser()
+            {
+                user = user,
+                UnbanDate = DateTime.Now.AddMinutes(30),
+            };
+
+            await blockedRepository.Create(blockedUser);
+        }
+
         private bool UserExists(RegisterViewModel model)
         {
-            User? user = repository.GetAll().FirstOrDefault(
+            User? user = userRepository.GetAll().FirstOrDefault(
                 u => u.Email == model.Email || u.Login == model.Login);
 
             if (user == null)

@@ -15,9 +15,11 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IRepository<User>, UserRepository>();
 builder.Services.AddScoped<IRepository<Password>, PasswordsRepository>();
+builder.Services.AddScoped<IRepository<BlockedUser>, BlockedRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddSingleton<ICryptography, Cryptography>();
+builder.Services.AddHostedService<TimeHostedService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {

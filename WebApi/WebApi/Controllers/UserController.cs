@@ -10,19 +10,25 @@ namespace WebApi.Controllers
     {
         private readonly IUserService userService;
 
-        public UserController(IUserService service) 
+        public UserController(IUserService service)
         {
             userService = service;
         }
 
         [Route("Authentication")]
         [HttpPost]
-        public async Task<IActionResult> Authentication(LoginViewModel model) 
+        public async Task<IActionResult> Authentication(LoginViewModel model)
         {
             var response = await userService.Login(model);
 
             if (response.Status == Domain.Enum.RequestStatus.Success)
-                return new JsonResult(response.Value); 
+                return new JsonResult(response.Value);
+            else if (response.Description == "Неверный пароль")
+            {
+                response.Description = response.Value.Id.ToString();
+
+                return NotFound(new { response.Description });
+            }
 
             return NotFound(new { response.Description });
         }
@@ -30,12 +36,12 @@ namespace WebApi.Controllers
         [Route("Register")]
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
-        { 
+        {
             var response = await userService.Register(model);
 
             if (response.Status == Domain.Enum.RequestStatus.Success)
                 return new JsonResult(response.Value);
-            
+
             return BadRequest(new { response.Description });
         }
 
@@ -46,6 +52,15 @@ namespace WebApi.Controllers
             var response = await userService.UpdateToken(secretToken);
 
             return Ok(new { response.Value });
+        }
+
+        [Route("BlockAccount")]
+        [HttpPost]
+        public async Task<IActionResult> BlockAccount(BlockUserViewModel block)
+        {
+            await userService.BlockAccount(block.Id);
+
+            return Ok();
         }
     }
 }
