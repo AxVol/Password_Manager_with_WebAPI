@@ -3,6 +3,7 @@ using System.Text;
 using WebApi.DAL.Interfaces;
 using WebApi.Domain.Entity;
 using WebApi.Domain.Response;
+using WebApi.Domain.ViewModels.Password;
 using WebApi.Domain.ViewModels.User;
 using WebApi.Service.Interfaces;
 
@@ -26,46 +27,45 @@ namespace WebApi.Service
 
         public async Task<IResponse<User>> Login(LoginViewModel model)
         {
-            IResponse<User> failedResponse = new Response<User>()
+            return await Task.Run(() =>
             {
-                Description = "Неверен логин или пароль",
-                Status = Domain.Enum.RequestStatus.Failed,
-                Value = null
-            };
+                IResponse<User> failedResponse = new Response<User>()
+                {
+                    Description = "Неверен логин или пароль",
+                    Status = Domain.Enum.RequestStatus.Failed,
+                    Value = null
+                };
 
-            User? user = userRepository.GetAll().FirstOrDefault(
-                u => u.Email == model.Login || u.Login == model.Login);
+                User? user = userRepository.GetAll().FirstOrDefault(
+                    u => u.Email == model.Login || u.Login == model.Login);
 
-            if (user == null)
-            {
-                return failedResponse;
-            }
+                if (user == null)
+                {
+                    return failedResponse;
+                }
 
-            BlockedUser? blockedUser = blockedRepository.GetAll().FirstOrDefault(u => u.user.Id == user.Id);
+                if (IsBanned(user))
+                {
+                    failedResponse.Description = "Вы были заблокированы";
 
-            if (blockedUser is not null)
-            {
-                failedResponse.Description = "Вы были заблокированы";
+                    return failedResponse;
+                }
 
-                return failedResponse;
-            }
+                if (!IsCorrectPassword(model.Password, user))
+                {
+                    failedResponse.Description = "Неверный пароль";
+                    failedResponse.Value = user;
 
-            string passwordHash = cryptography.GetPasswordHash(model.Password, user.Login);
+                    return failedResponse;
+                }
 
-            if (passwordHash != user.Password)
-            {
-                failedResponse.Description = "Неверный пароль";
-                failedResponse.Value = user;
-
-                return failedResponse;
-            }
-
-            return new Response<User>()
-            {
-                Description = "Успех",
-                Status = Domain.Enum.RequestStatus.Success,
-                Value = user
-            };
+                return new Response<User>()
+                {
+                    Description = "Успех",
+                    Status = Domain.Enum.RequestStatus.Success,
+                    Value = user
+                };
+            });
         }
 
         public async Task<IResponse<User>> Register(RegisterViewModel model)
@@ -154,7 +154,7 @@ namespace WebApi.Service
 
             BlockedUser blockedUser = new BlockedUser()
             {
-                user = user,
+                User = user,
                 UnbanDate = DateTime.Now.AddMinutes(30),
             };
 
@@ -170,6 +170,30 @@ namespace WebApi.Service
                 return false;
             else
                 return true;
+        }
+
+        private bool IsBanned(User user)
+        {
+            BlockedUser? blockedUser = blockedRepository.GetAll().FirstOrDefault(u => u.User.Id == user.Id);
+
+            if (blockedUser is null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool IsCorrectPassword(string password, User user)
+        {
+            string passwordHash = cryptography.GetPasswordHash(password, user.Login);
+
+            if (passwordHash != user.Password)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

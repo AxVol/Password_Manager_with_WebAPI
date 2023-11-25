@@ -44,16 +44,13 @@ namespace WebApi.Service.Implementations
             Array.Copy(passwordBytes, 0, saltPassword, 0, passwordBytes.Length);
             Array.Copy(saltBytes, 0, saltPassword, 0, saltBytes.Length);
 
-            using (SHA512 sha512 = SHA512.Create())
-            {
-                byte[] hashBytes = sha512.ComputeHash(saltPassword);  
-                StringBuilder hash = new StringBuilder(128);
+            byte[] hashBytes = SHA512.HashData(saltPassword);  
+            StringBuilder hash = new StringBuilder(128);
 
-                foreach (byte b in hashBytes)
-                    hash.Append(b.ToString("X2"));
+            foreach (byte b in hashBytes)
+                hash.Append(b.ToString("X2"));
 
-                return hash.ToString();
-            }
+            return hash.ToString();
         }
 
         private void SetIV(long vector)

@@ -8,7 +8,7 @@ namespace Desktop_client.Services.Implementations
     public class PageService : IPageService
     {
         public string PasswordPageStatus { get; set; }
-        public Password password { get; set; }
+        public Password Password { get; set; }
 
         public event Action<Page> OnPageChanged;
 

@@ -15,15 +15,15 @@ namespace Desktop_client.ViewModels
         private readonly IPageService pageService;
 
         [ObservableProperty]
-        private string errorMessage;
+        private string? errorMessage;
         [ObservableProperty]
-        private string login;
+        private string? login;
         [ObservableProperty]
-        private string email;
+        private string? email;
         [ObservableProperty]
-        private string password;
+        private string? password;
         [ObservableProperty]
-        private string repeatPassword;
+        private string? repeatPassword;
         [ObservableProperty]
         private bool enableButton = true;
 

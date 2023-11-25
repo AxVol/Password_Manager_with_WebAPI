@@ -12,9 +12,9 @@ namespace Desktop_client.Services.Implementations
         private readonly HttpClient httpClient;
         private readonly IPasswordService passwordService;
         private readonly IUserManager userManager;
+        private readonly int countToBan = 3;
 
-        private int CountToBan { get; } = 3;
-        private int TryedToLogin { get; set; } = 0;
+        private int tryedToLogin = 0;
 
         public ConnectionService(IHttpClientFactory httpFactory, IUserManager manager, IPasswordService pass) 
         {
@@ -56,14 +56,14 @@ namespace Desktop_client.Services.Implementations
 
                 if (long.TryParse(error.Description, out long id))
                 {
-                    if (TryedToLogin == CountToBan)
+                    if (tryedToLogin == countToBan)
                     {
                         await BlockAccount(id);
 
                         return "Вы были заблокированы за подозрительную активность";
                     }
 
-                    TryedToLogin++;
+                    tryedToLogin++;
 
                     return "Неверный логин или пароль";
                 }
@@ -75,8 +75,8 @@ namespace Desktop_client.Services.Implementations
 
             if (user != null)
             {
-                userManager.user = user;
-                userManager.passwords = await passwordService.GetAll(userManager.user.SecretToken);
+                userManager.User = user;
+                userManager.Passwords = await passwordService.GetAll(userManager.User.SecretToken);
 
                 return "Успешно";
             }
@@ -100,7 +100,7 @@ namespace Desktop_client.Services.Implementations
 
             if (user != null)
             {
-                userManager.user = user;
+                userManager.User = user;
 
                 return "Успешно";
             }

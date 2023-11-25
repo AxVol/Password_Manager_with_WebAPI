@@ -6,8 +6,8 @@ namespace Desktop_client.Services.Interfaces
 {
     public interface IUserManager
     {
-        public User user { get; set; }
-        public ObservableCollection<Password> passwords { get; set; }
+        public User User { get; set; }
+        public ObservableCollection<Password> Passwords { get; set; }
 
         public Task AddPassword(Password password);
         public Task RemovePassword(Password id);

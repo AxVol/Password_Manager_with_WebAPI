@@ -93,7 +93,7 @@ namespace WebApi.Tests.Mock
                 new BlockedUser()
                 {
                     Id = 1,
-                    user = users[2],
+                    User = users[2],
                     UnbanDate = DateTime.Now.AddMinutes(30),
                 }
             };

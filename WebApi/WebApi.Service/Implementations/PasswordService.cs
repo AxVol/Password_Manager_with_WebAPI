@@ -92,52 +92,55 @@ namespace WebApi.Service.Implementations
 
         public async Task<IResponse<PasswordResponse>> GetAll(PasswordViewModel model)
         {
-            try
+            return await Task.Run(() =>
             {
-                IEnumerable<Password> passwords = passwordRepository.GetAll().
-                    Where(p => p.User.SecretToken == model.SecretToken);
-                List<PasswordResponse> responsePasswords = new List<PasswordResponse>();
-
-                if (!passwords.Any())
+                try
                 {
+                    IEnumerable<Password> passwords = passwordRepository.GetAll().
+                        Where(p => p.User.SecretToken == model.SecretToken);
+                    List<PasswordResponse> responsePasswords = new List<PasswordResponse>();
+
+                    if (!passwords.Any())
+                    {
+                        return new Response<PasswordResponse>()
+                        {
+                            Description = "Пользователь не найден или у него нету паролей",
+                            Status = Domain.Enum.RequestStatus.Failed
+                        };
+                    }
+
+                    foreach (Password password in passwords)
+                    {
+                        string pass = cryptography.DecryptPassword(password.PassWord, password.User.Id);
+                        password.PassWord = pass;
+
+                        PasswordResponse responseModel = new PasswordResponse()
+                        {
+                            Id = password.Id,
+                            Login = password.LoginService,
+                            Password = password.PassWord,
+                            Service = password.PassService,
+                        };
+                        responsePasswords.Add(responseModel);
+                    }
+
                     return new Response<PasswordResponse>()
                     {
-                        Description = "Пользователь не найден или у него нету паролей",
+                        Status = Domain.Enum.RequestStatus.Success,
+                        Values = responsePasswords
+                    };
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex.Message);
+
+                    return new Response<PasswordResponse>()
+                    {
+                        Description = "Не предвиденная ошибка",
                         Status = Domain.Enum.RequestStatus.Failed
                     };
                 }
-
-                foreach (Password password in passwords)
-                {
-                    string pass = cryptography.DecryptPassword(password.PassWord, password.User.Id);
-                    password.PassWord = pass;
-
-                    PasswordResponse responseModel = new PasswordResponse()
-                    {
-                        Id = password.Id,
-                        Login = password.LoginService,
-                        Password = password.PassWord,
-                        Service = password.PassService,
-                    };
-                    responsePasswords.Add(responseModel);
-                }
-
-                return new Response<PasswordResponse>()
-                {
-                    Status = Domain.Enum.RequestStatus.Success,
-                    Values = responsePasswords
-                };
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex.Message);
-
-                return new Response<PasswordResponse>()
-                {
-                    Description = "Не предвиденная ошибка",
-                    Status = Domain.Enum.RequestStatus.Failed
-                };
-            }
+            });
         }
 
         public async Task<IResponse<PasswordResponse>> Update(PasswordViewModel model)

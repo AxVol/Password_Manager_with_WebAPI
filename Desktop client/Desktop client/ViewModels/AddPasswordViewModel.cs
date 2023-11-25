@@ -17,11 +17,11 @@ namespace Desktop_client.ViewModels
         private readonly IPageService pageService;
 
         [ObservableProperty]
-        private string service;
+        private string? service;
         [ObservableProperty]
-        private string login;
+        private string? login;
         [ObservableProperty]
-        private string password;
+        private string? password;
         [ObservableProperty]
         private bool isEnabled = true;
         [ObservableProperty]
@@ -40,7 +40,7 @@ namespace Desktop_client.ViewModels
         }
 
         public delegate void PasswordGeneratedHandler(string password);
-        public event PasswordGeneratedHandler PasswordGeneratedEvent;
+        public event PasswordGeneratedHandler? PasswordGeneratedEvent;
 
         public AddPasswordViewModel(IPasswordService password, IPageService page, IUserManager manager) 
         {
@@ -50,9 +50,9 @@ namespace Desktop_client.ViewModels
 
             if (pageService.PasswordPageStatus == "Update")
             {
-                Service = pageService.password.Service;
-                Login = pageService.password.Login;
-                Password = pageService.password.PassWord;
+                Service = pageService.Password.Service;
+                Login = pageService.Password.Login;
+                Password = pageService.Password.PassWord;
                 ButtonText = "Изменить пароль";
                 Title = "Изменение пароля";
             }
@@ -61,18 +61,21 @@ namespace Desktop_client.ViewModels
         [RelayCommand]
         private async Task ShowPassword(object data)
         {
-            PasswordBox passwordBox = data as PasswordBox;
-
-            if (passwordBox.Visibility == System.Windows.Visibility.Visible)
+            await Task.Run(() =>
             {
-                Password = passwordBox.Password;
-                passwordBox.Visibility = System.Windows.Visibility.Hidden;
+                PasswordBox passwordBox = data as PasswordBox;
 
-                return;
-            }
+                if (passwordBox.Visibility == System.Windows.Visibility.Visible)
+                {
+                    Password = passwordBox.Password;
+                    passwordBox.Visibility = System.Windows.Visibility.Hidden;
 
-            passwordBox.Password = Password;
-            passwordBox.Visibility = System.Windows.Visibility.Visible;
+                    return;
+                }
+
+                passwordBox.Password = Password;
+                passwordBox.Visibility = System.Windows.Visibility.Visible;
+            });
         }
 
         [RelayCommand]
@@ -96,10 +99,10 @@ namespace Desktop_client.ViewModels
         private async Task SendPassword(object data)
         {
             IsEnabled = false;
-            Models.Password passWord = new Models.Password();
+            Password passWord = new Password();
 
-            if (pageService.password != null)
-                passWord.Id = pageService.password.Id;
+            if (pageService.Password != null)
+                passWord.Id = pageService.Password.Id;
 
             passWord.PassWord = Password;
             passWord.Service = Service;
@@ -107,7 +110,7 @@ namespace Desktop_client.ViewModels
             PasswordSendModel password = new PasswordSendModel()
             {
                 Id = passWord.Id,
-                SecretToken = userManager.user.SecretToken,
+                SecretToken = userManager.User.SecretToken,
                 Service = Service,
                 Login = Login,
                 Password = Password

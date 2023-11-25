@@ -7,7 +7,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
-using System.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Threading.Tasks;
 
@@ -20,7 +19,7 @@ namespace Desktop_client.ViewModels
         private readonly IUserManager userManager;
 
         [ObservableProperty]
-        private ObservableCollection<Password> passwords;
+        private ObservableCollection<Password>? passwords;
         [ObservableProperty]
         private bool isEnabled = true;
         [ObservableProperty]
@@ -32,9 +31,9 @@ namespace Desktop_client.ViewModels
             userManager = manager;
             passwordService = password;
 
-            if (userManager.user != null)
+            if (userManager.User != null)
             {
-                Passwords = userManager.passwords;
+                Passwords = userManager.Passwords;
             }
         }
 
@@ -95,7 +94,7 @@ namespace Desktop_client.ViewModels
             Password password = Passwords.First(p => p.Id == id);
 
             pageService.PasswordPageStatus = "Update";
-            pageService.password = password;
+            pageService.Password = password;
             pageService.ChangePage(new AddPassword());
         }
 
@@ -109,7 +108,7 @@ namespace Desktop_client.ViewModels
             PasswordSendModel sendModel = new PasswordSendModel()
             {
                 Id = password.Id,
-                SecretToken = userManager.user.SecretToken,
+                SecretToken = userManager.User.SecretToken,
                 Login = password.Login,
                 Password = password.PassWord,
                 Service = password.Service,
@@ -124,9 +123,9 @@ namespace Desktop_client.ViewModels
         [RelayCommand]
         private async Task UpdateToken(object data)
         {
-            string token = await passwordService.UpdateUserToken(userManager.user.SecretToken);
+            string token = await passwordService.UpdateUserToken(userManager.User.SecretToken);
 
-            userManager.user.SecretToken = token;
+            userManager.User.SecretToken = token;
         }
 
         [RelayCommand]
@@ -139,8 +138,8 @@ namespace Desktop_client.ViewModels
         [RelayCommand]
         private void Logout(object data)
         {
-            userManager.user = null;
-            userManager.passwords = null;
+            userManager.User = null;
+            userManager.Passwords = null;
 
             pageService.ChangePage(new LoginPage());
         }

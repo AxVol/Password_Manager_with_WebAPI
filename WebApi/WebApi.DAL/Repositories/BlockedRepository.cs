@@ -27,7 +27,7 @@ namespace WebApi.DAL.Repositories
 
         public IEnumerable<BlockedUser> GetAll()
         {
-            return context.BlockedUsers.Include(u => u.user);
+            return context.BlockedUsers.Include(u => u.User);
         }
 
         public Task Update(BlockedUser entity)

@@ -15,11 +15,11 @@ namespace Desktop_client.ViewModels
         private readonly IConnectionService connectionService;
 
         [ObservableProperty]
-        private string login;
+        private string? login;
         [ObservableProperty]
-        private string password;
+        private string? password;
         [ObservableProperty]
-        private string errorMessage;
+        private string? errorMessage;
         [ObservableProperty]
         private bool enableButton = true;
 
@@ -54,18 +54,21 @@ namespace Desktop_client.ViewModels
         [RelayCommand]
         private async Task ShowPassword(object data)
         {
-            PasswordBox passwordBox = data as PasswordBox;
-
-            if (passwordBox.Visibility == System.Windows.Visibility.Visible)
+            await Task.Run(() => 
             {
-                Password = passwordBox.Password;
-                passwordBox.Visibility = System.Windows.Visibility.Hidden;
+                PasswordBox passwordBox = data as PasswordBox;
 
-                return;
-            }
+                if (passwordBox.Visibility == System.Windows.Visibility.Visible)
+                {
+                    Password = passwordBox.Password;
+                    passwordBox.Visibility = System.Windows.Visibility.Hidden;
 
-            passwordBox.Password = Password;
-            passwordBox.Visibility = System.Windows.Visibility.Visible;
+                    return;
+                }
+
+                passwordBox.Password = Password;
+                passwordBox.Visibility = System.Windows.Visibility.Visible;
+            });
         }
 
         [RelayCommand]

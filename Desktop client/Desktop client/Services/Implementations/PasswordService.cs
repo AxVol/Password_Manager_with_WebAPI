@@ -12,6 +12,9 @@ namespace Desktop_client.Services.Implementations
     public class PasswordService : IPasswordService
     {
         private readonly HttpClient httpClient;
+        private readonly char[] specSymbols = new char[] { '?', '!', '@', '#', '$', '%', '&' };
+        private readonly int lenChar = 9;
+        private readonly int countSpecSymbols = 2;
 
         public PasswordService(IHttpClientFactory httpFactory) 
         {
@@ -42,30 +45,25 @@ namespace Desktop_client.Services.Implementations
         {
             string password = string.Empty;
             Random random = new Random();
-            int lenChar = 9;
-            int countSpecSymbols = 2;
 
-            char[] specSymbols = new char[]
+            await Task.Run(() =>
             {
-                '?', '!', '@', '#', '$', '%', '&'
-            };
+                while (password.Length < lenChar)
+                {
+                    char c = (char)random.Next(33, 125);
 
-            while (password.Length < lenChar)
-            {
-                char c = (char)random.Next(33, 125);
+                    if (char.IsLetterOrDigit(c))
+                        password += c;
+                }
 
-                if (char.IsLetterOrDigit(c))
-                    password += c;
-            }
+                for (int i = 0; i < countSpecSymbols; i++)
+                {
+                    char specSymbol = specSymbols[random.Next(specSymbols.Length)];
+                    int placeInPassword = random.Next(0, password.Length);
 
-            for (int i = 0; i < countSpecSymbols; i++)
-            {
-                char specSymbol = specSymbols[random.Next(specSymbols.Length)];
-                int placeInPassword = random.Next(0, password.Length);
-
-                password = password.Insert(placeInPassword, specSymbol.ToString());
-            }
-
+                    password = password.Insert(placeInPassword, specSymbol.ToString());
+                }
+            });
             return password;
         }
 

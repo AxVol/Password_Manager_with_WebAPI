@@ -1,18 +1,22 @@
-﻿using Desktop_client.Core;
-using Desktop_client.Services;
+﻿using Desktop_client.Services;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Desktop_client.Models
 {
-    public class Password : ObservableObject
+    public partial class Password : ObservableObject
     {
         public int Id { get; set; }
         public string Login { get; set; }
         public string PassWord { get; set; }
         public string Service { get; set; }
-        public Visibility PasswordStatus { get; set; } = Visibility.Hidden;
-        public Visibility HiddenPasswordStatus { get; set; } = Visibility.Visible;
+
+        [ObservableProperty]
+        private Visibility passwordStatus = Visibility.Hidden;
+        [ObservableProperty]
+        private Visibility hiddenPasswordStatus = Visibility.Visible;
+
         public string HiddenPassword 
         {
             get
