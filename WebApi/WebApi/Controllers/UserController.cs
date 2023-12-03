@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WebApi.Domain.ViewModels.User;
 using WebApi.Service;
+using WebApi.Service.Interfaces;
 
 namespace WebApi.Controllers
 {
@@ -9,10 +11,12 @@ namespace WebApi.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService userService;
+        private readonly IJWTService jWTService;
 
-        public UserController(IUserService service)
+        public UserController(IUserService service, IJWTService jWT)
         {
             userService = service;
+            jWTService = jWT;
         }
 
         [Route("Authentication")]
@@ -22,15 +26,19 @@ namespace WebApi.Controllers
             var response = await userService.Login(model);
 
             if (response.Status == Domain.Enum.RequestStatus.Success)
+            {
+                response.Value.SecretToken = await jWTService.GetToken(response.Value);
+
                 return new JsonResult(response.Value);
+            }
             else if (response.Description == "Неверный пароль")
             {
                 response.Description = response.Value.Id.ToString();
 
-                return NotFound(new { response.Description });
+                return Unauthorized(new { response.Description });
             }
 
-            return NotFound(new { response.Description });
+            return Unauthorized(new { response.Description });
         }
 
         [Route("Register")]
@@ -45,6 +53,7 @@ namespace WebApi.Controllers
             return BadRequest(new { response.Description });
         }
 
+        [Authorize]
         [Route("UpdateToken")]
         [HttpPut]
         public async Task<IActionResult> Update(string secretToken)
