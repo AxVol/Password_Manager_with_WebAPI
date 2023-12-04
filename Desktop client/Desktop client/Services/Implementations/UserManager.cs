@@ -7,10 +7,10 @@ namespace Desktop_client.Services.Implementations
 {
     public class UserManager : IUserManager
     {
-        public User User { get; set; }
+        public string Token { get; set; }
         public ObservableCollection<Password> Passwords { get; set; }
 
-        public async Task AddPassword(Password password)
+        public void AddPassword(Password password)
         {
             Password pass = new Password()
             {
@@ -19,29 +19,27 @@ namespace Desktop_client.Services.Implementations
                 PassWord = password.PassWord,
                 Service = password.Service,
             };
-            await Task.Run(() => Passwords.Add(pass));
+            Passwords.Add(pass);
         }
 
-        public async Task RemovePassword(Password password)
+        public void RemovePassword(Password password)
         {
-           await Task.Run(() => Passwords.Remove(password));
+            Passwords.Remove(password);
         }
 
-        public async Task UpdatePassword(Password password)
+        public void UpdatePassword(Password password)
         {
-            await Task.Run(() =>
+            foreach (Password pass in Passwords)
             {
-                foreach (Password pass in Passwords)
+                if (pass.Id == password.Id)
                 {
-                    if (pass.Id == password.Id)
-                    {
-                        pass.PassWord = password.PassWord;
-                        pass.Login = password.Login;
-                        pass.Service = password.Service;
-                        return;
-                    }
+                    pass.PassWord = password.PassWord;
+                    pass.Login = password.Login;
+                    pass.Service = password.Service;
+                    
+                    return;
                 }
-            });
+            }
         }
     }
 }

@@ -6,9 +6,9 @@ namespace WebApi.Service.Interfaces
 {
     public interface IPasswordService
     {
-        Task<IResponse<PasswordResponse>> GetAll(PasswordViewModel model);
-        Task<IResponse<PasswordResponse>> Create(PasswordViewModel model);
-        Task<IResponse<PasswordResponse>> Update(PasswordViewModel model);
-        Task<IResponse<PasswordResponse>> Delete(PasswordViewModel model);
+        Task<IResponse<PasswordResponse>> GetAll(string token);
+        Task<IResponse<PasswordResponse>> Create(PasswordViewModel model, string token);
+        Task<IResponse<PasswordResponse>> Update(PasswordViewModel model, string token);
+        Task<IResponse<PasswordResponse>> Delete(PasswordViewModel model, string token);
     }
 }

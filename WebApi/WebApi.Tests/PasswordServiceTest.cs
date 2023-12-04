@@ -78,13 +78,10 @@ namespace WebApi.Tests
         public async void GetAll_not_exists_user_test()
         {
             // Arrage
-            PasswordViewModel notExistsUser = new PasswordViewModel()
-            {
-                SecretToken = "ZGUwNTAyZDItZmFjZC00N2SDADkZTDSDAQtODSAASTYyMWQ1NTFlMzk4"
-            };
+            string secretToken = "ZGUwNTAyZDItZmFjZC00N2SDADkZTDSDAQtODSAASTYyMWQ1NTFlMzk4";
 
             // Act
-            var responseNotExists = await passwordService.GetAll(notExistsUser);
+            var responseNotExists = await passwordService.GetAll(secretToken);
 
             // Assert
             Assert.Equal(Domain.Enum.RequestStatus.Failed, responseNotExists.Status);
@@ -94,13 +91,10 @@ namespace WebApi.Tests
         public async void GetAll_empty_Password_test()
         {
             // Arrage
-            PasswordViewModel EmptyPassword = new PasswordViewModel()
-            {
-                SecretToken = "ZDI0NmNiMDAtZTdhMi00ODYwLWI4YWQtYTc0YjU0NzIyMzQ4"
-            };
+            string secretToken = "ZDI0NmNiMDAtZTdhMi00ODYwLWI4YWQtYTc0YjU0NzIyMzQ4";
 
             // Act
-            var responseEmptyPassword = await passwordService.GetAll(EmptyPassword);
+            var responseEmptyPassword = await passwordService.GetAll(secretToken);
 
             // Assert
             Assert.Equal(Domain.Enum.RequestStatus.Failed, responseEmptyPassword.Status);

@@ -19,14 +19,12 @@ namespace WebApi.Controllers
 
         [Route("GetUserPass/")]
         [HttpGet]
-        public async Task<IActionResult> GetAll(string secretToken)
+        public async Task<IActionResult> GetAll()
         {
-            PasswordViewModel model = new PasswordViewModel()
-            {
-                SecretToken = secretToken
-            };
+            string token = Request.Headers.Authorization!;
+            token = token.Split(' ')[1];
 
-            var response = await passwordService.GetAll(model);
+            var response = await passwordService.GetAll(token);
 
             if (response.Status == Domain.Enum.RequestStatus.Failed)
                 return BadRequest(new { response.Description });
@@ -38,7 +36,9 @@ namespace WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(PasswordViewModel model)
         {
-            var response = await passwordService.Create(model);
+            string token = Request.Headers.Authorization!;
+            token = token.Split(' ')[1];
+            var response = await passwordService.Create(model, token);
 
             if (response.Status == Domain.Enum.RequestStatus.Failed)
                 return BadRequest(new { response.Description });
@@ -50,7 +50,9 @@ namespace WebApi.Controllers
         [HttpPut]
         public async Task<IActionResult> Update(PasswordViewModel model)
         {
-            var response = await passwordService.Update(model);
+            string token = Request.Headers.Authorization!;
+            token = token.Split(' ')[1];
+            var response = await passwordService.Update(model, token);
 
             if (response.Status == Domain.Enum.RequestStatus.Failed)
                 return BadRequest(new { response.Description });
@@ -62,7 +64,9 @@ namespace WebApi.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(PasswordViewModel model)
         {
-            var response = await passwordService.Delete(model);
+            string token = Request.Headers.Authorization!;
+            token = token.Split(' ')[1];
+            var response = await passwordService.Delete(model, token);
 
             return new JsonResult(response.Description);
         }

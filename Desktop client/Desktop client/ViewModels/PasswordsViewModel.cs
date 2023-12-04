@@ -31,7 +31,7 @@ namespace Desktop_client.ViewModels
             userManager = manager;
             passwordService = password;
 
-            if (userManager.User != null)
+            if (userManager.Token != null)
             {
                 Passwords = userManager.Passwords;
             }
@@ -108,24 +108,15 @@ namespace Desktop_client.ViewModels
             PasswordSendModel sendModel = new PasswordSendModel()
             {
                 Id = password.Id,
-                SecretToken = userManager.User.SecretToken,
                 Login = password.Login,
                 Password = password.PassWord,
                 Service = password.Service,
             };
 
-            await passwordService.Delete(sendModel);
-            await userManager.RemovePassword(password);
+            await passwordService.Delete(sendModel, userManager.Token);
+            userManager.RemovePassword(password);
 
             pageService.ChangePage(new PasswordsPage());
-        }
-
-        [RelayCommand]
-        private async Task UpdateToken(object data)
-        {
-            string token = await passwordService.UpdateUserToken(userManager.User.SecretToken);
-
-            userManager.User.SecretToken = token;
         }
 
         [RelayCommand]
@@ -138,7 +129,7 @@ namespace Desktop_client.ViewModels
         [RelayCommand]
         private void Logout(object data)
         {
-            userManager.User = null;
+            userManager.Token = null;
             userManager.Passwords = null;
 
             pageService.ChangePage(new LoginPage());

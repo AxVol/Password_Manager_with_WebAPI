@@ -32,7 +32,6 @@ namespace WebApi.Service.Implementations
                     expires: DateTime.Now.Add(TimeSpan.FromHours(12)),
                     signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtSettings:Key"]!)), SecurityAlgorithms.HmacSha256)
                 );
-
             string encodedJWT = new JwtSecurityTokenHandler().WriteToken(jwt);
 
             return encodedJWT;

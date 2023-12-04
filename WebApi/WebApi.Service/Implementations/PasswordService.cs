@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using WebApi.DAL.Interfaces;
 using WebApi.Domain.Entity;
 using WebApi.Domain.Response;
@@ -24,11 +26,14 @@ namespace WebApi.Service.Implementations
             cryptography = crypt;
         }
 
-        public async Task<IResponse<PasswordResponse>> Create(PasswordViewModel model)
+        public async Task<IResponse<PasswordResponse>> Create(PasswordViewModel model, string token)
         {
             try
             {
-                User user = userRepository.GetAll().First(u => u.SecretToken == model.SecretToken);
+                JwtSecurityToken jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+                List<Claim> claims = new List<Claim>(jwt.Claims);
+                string userLogin = claims[0].Value;
+                User user = userRepository.GetAll().First(u => u.Login == userLogin);
                 string cypherPass = cryptography.EncryptPassword(model.Password, user.Id);
 
                 Password password = new Password()
@@ -67,10 +72,13 @@ namespace WebApi.Service.Implementations
             }
         }
 
-        public async Task<IResponse<PasswordResponse>> Delete(PasswordViewModel model)
+        public async Task<IResponse<PasswordResponse>> Delete(PasswordViewModel model, string token)
         {
-            Password? password = passwordRepository.GetAll().
-                FirstOrDefault(p => p.Id == model.Id && p.User.SecretToken == model.SecretToken);
+            JwtSecurityToken jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+            List<Claim> claims = new List<Claim>(jwt.Claims);
+            string userLogin = claims[0].Value;
+            Password? password = passwordRepository.GetAll()
+                .FirstOrDefault(p => p.Id == model.Id && p.User.Login == userLogin);
 
             if (password == null)
             {
@@ -90,14 +98,18 @@ namespace WebApi.Service.Implementations
             };
         }
 
-        public async Task<IResponse<PasswordResponse>> GetAll(PasswordViewModel model)
+        public async Task<IResponse<PasswordResponse>> GetAll(string token)
         {
             return await Task.Run(() =>
             {
                 try
                 {
+                    JwtSecurityToken jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+                    List<Claim> claims = new List<Claim>(jwt.Claims);
+                    string userLogin = claims[0].Value;
+
                     IEnumerable<Password> passwords = passwordRepository.GetAll().
-                        Where(p => p.User.SecretToken == model.SecretToken);
+                        Where(p => p.User.Login == userLogin);
                     List<PasswordResponse> responsePasswords = new List<PasswordResponse>();
 
                     if (!passwords.Any())
@@ -143,10 +155,13 @@ namespace WebApi.Service.Implementations
             });
         }
 
-        public async Task<IResponse<PasswordResponse>> Update(PasswordViewModel model)
+        public async Task<IResponse<PasswordResponse>> Update(PasswordViewModel model, string token)
         {
+            JwtSecurityToken jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+            List<Claim> claims = new List<Claim>(jwt.Claims);
+            string userLogin = claims[0].Value;
             Password? password = passwordRepository.GetAll().
-                FirstOrDefault(p => p.Id == model.Id && p.User.SecretToken == model.SecretToken);
+                FirstOrDefault(p => p.Id == model.Id && p.User.Login == userLogin);
 
             if (password == null)
             {

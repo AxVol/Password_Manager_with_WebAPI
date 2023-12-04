@@ -59,23 +59,20 @@ namespace Desktop_client.ViewModels
         }
 
         [RelayCommand]
-        private async Task ShowPassword(object data)
+        private void ShowPassword(object data)
         {
-            await Task.Run(() =>
+            PasswordBox passwordBox = data as PasswordBox;
+
+            if (passwordBox.Visibility == System.Windows.Visibility.Visible)
             {
-                PasswordBox passwordBox = data as PasswordBox;
+                Password = passwordBox.Password;
+                passwordBox.Visibility = System.Windows.Visibility.Hidden;
+                
+                return;
+            }
 
-                if (passwordBox.Visibility == System.Windows.Visibility.Visible)
-                {
-                    Password = passwordBox.Password;
-                    passwordBox.Visibility = System.Windows.Visibility.Hidden;
-
-                    return;
-                }
-
-                passwordBox.Password = Password;
-                passwordBox.Visibility = System.Windows.Visibility.Visible;
-            });
+            passwordBox.Password = Password;
+            passwordBox.Visibility = System.Windows.Visibility.Visible;
         }
 
         [RelayCommand]
@@ -110,7 +107,6 @@ namespace Desktop_client.ViewModels
             PasswordSendModel password = new PasswordSendModel()
             {
                 Id = passWord.Id,
-                SecretToken = userManager.User.SecretToken,
                 Service = Service,
                 Login = Login,
                 Password = Password
@@ -119,13 +115,13 @@ namespace Desktop_client.ViewModels
             switch (pageService.PasswordPageStatus)
             {
                 case "Add":
-                    await passwordService.Create(password);
-                    await userManager.AddPassword(passWord);
+                    await passwordService.Create(password, userManager.Token);
+                    userManager.AddPassword(passWord);
 
                     break;
                 case "Update":
-                    await passwordService.Update(password);
-                    await userManager.UpdatePassword(passWord);
+                    await passwordService.Update(password, userManager.Token);
+                    userManager.UpdatePassword(passWord);
                     
                     break;
             }

@@ -8,7 +8,6 @@ namespace WebApi.Service
     {
         Task<IResponse<User>> Register(RegisterViewModel model);
         Task<IResponse<User>> Login(LoginViewModel model);
-        Task<IResponse<string>> UpdateToken(string token);
         Task BlockAccount(long id);
     }
 }

@@ -6,11 +6,11 @@ namespace Desktop_client.Services.Interfaces
 {
     public interface IUserManager
     {
-        public User User { get; set; }
+        public string Token { get; set; }
         public ObservableCollection<Password> Passwords { get; set; }
 
-        public Task AddPassword(Password password);
-        public Task RemovePassword(Password id);
-        public Task UpdatePassword(Password password);
+        public void AddPassword(Password password);
+        public void RemovePassword(Password id);
+        public void UpdatePassword(Password password);
     }
 }

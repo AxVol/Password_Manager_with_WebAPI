@@ -52,23 +52,20 @@ namespace Desktop_client.ViewModels
         }
 
         [RelayCommand]
-        private async Task ShowPassword(object data)
+        private void ShowPassword(object data)
         {
-            await Task.Run(() => 
+            PasswordBox passwordBox = data as PasswordBox;
+
+            if (passwordBox.Visibility == System.Windows.Visibility.Visible)
             {
-                PasswordBox passwordBox = data as PasswordBox;
+                Password = passwordBox.Password;
+                passwordBox.Visibility = System.Windows.Visibility.Hidden;
 
-                if (passwordBox.Visibility == System.Windows.Visibility.Visible)
-                {
-                    Password = passwordBox.Password;
-                    passwordBox.Visibility = System.Windows.Visibility.Hidden;
+                return;
+            }
 
-                    return;
-                }
-
-                passwordBox.Password = Password;
-                passwordBox.Visibility = System.Windows.Visibility.Visible;
-            });
+            passwordBox.Password = Password;
+            passwordBox.Visibility = System.Windows.Visibility.Visible;
         }
 
         [RelayCommand]

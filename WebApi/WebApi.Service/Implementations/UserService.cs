@@ -87,8 +87,7 @@ namespace WebApi.Service
                 {
                     Login = model.Login,
                     Email = model.Email,
-                    Password = hashPassword,
-                    SecretToken = Convert.ToBase64String(Encoding.UTF8.GetBytes(Guid.NewGuid().ToString()))
+                    Password = hashPassword
                 };
 
                 await userRepository.Create(user);
@@ -105,36 +104,6 @@ namespace WebApi.Service
                 logger.LogError(ex, ex.Message);
 
                 return new Response<User>()
-                {
-                    Description = "Непредвиденная ошибка",
-                    Status = Domain.Enum.RequestStatus.Failed
-                };
-            }
-        }
-
-        public async Task<IResponse<string>> UpdateToken(string token)
-        {
-            string newToken = Convert.ToBase64String(Encoding.UTF8.GetBytes(Guid.NewGuid().ToString()));
-
-            try
-            {
-                User user = userRepository.GetAll().First(u => u.SecretToken == token);
-                user.SecretToken = newToken;
-
-                await userRepository.Update(user);
-
-                return new Response<string>()
-                {
-                    Description = "Токен успешно обновлен",
-                    Status = Domain.Enum.RequestStatus.Success,
-                    Value = user.SecretToken
-                };
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, ex.Message);
-
-                return new Response<string>()
                 {
                     Description = "Непредвиденная ошибка",
                     Status = Domain.Enum.RequestStatus.Failed

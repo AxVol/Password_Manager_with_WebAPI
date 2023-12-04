@@ -13,6 +13,7 @@ namespace Desktop_client.Services.Implementations
         private readonly IPasswordService passwordService;
         private readonly IUserManager userManager;
         private readonly int countToBan = 3;
+        private readonly string url = "https://localhost:7125/api/User";
 
         private int tryedToLogin = 0;
 
@@ -48,9 +49,9 @@ namespace Desktop_client.Services.Implementations
             };
 
             JsonContent json = JsonContent.Create(loginModel);
-            using var response = await httpClient.PostAsync("https://localhost:7125/api/User/Authentication", json);
+            using var response = await httpClient.PostAsync($"{url}/Authentication", json);
 
-            if (response.StatusCode == HttpStatusCode.NotFound)
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
                 Error? error = await response.Content.ReadFromJsonAsync<Error>();
 
@@ -71,12 +72,12 @@ namespace Desktop_client.Services.Implementations
                 return error.Description;
             }
 
-            User? user = await response.Content.ReadFromJsonAsync<User>();
+            string? jwt = await response.Content.ReadFromJsonAsync<string>();
 
-            if (user != null)
+            if (jwt != null)
             {
-                userManager.User = user;
-                userManager.Passwords = await passwordService.GetAll(userManager.User.SecretToken);
+                userManager.Token = jwt;
+                userManager.Passwords = await passwordService.GetAll(userManager.Token);
 
                 return "Успешно";
             }
@@ -87,7 +88,7 @@ namespace Desktop_client.Services.Implementations
         public async Task<string> Register(RegistrationModel model)
         {
             JsonContent json = JsonContent.Create(model);
-            using var response = await httpClient.PostAsync("https://localhost:7125/api/User/Register", json);
+            using var response = await httpClient.PostAsync($"{url}/Register", json);
 
             if (response.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -96,11 +97,11 @@ namespace Desktop_client.Services.Implementations
                 return error.Description;
             }
 
-            User? user = await response.Content.ReadFromJsonAsync<User>();
+            string? jwt = await response.Content.ReadFromJsonAsync<string>();
 
-            if (user != null)
+            if (jwt != null)
             {
-                userManager.User = user;
+                userManager.Token = jwt;
 
                 return "Успешно";
             }
@@ -112,7 +113,7 @@ namespace Desktop_client.Services.Implementations
         {
             JsonContent json = JsonContent.Create(new { id });
 
-            await httpClient.PostAsync("https://localhost:7125/api/User/BlockAccount", json);
+            await httpClient.PostAsync($"{url}/BlockAccount", json);
         }
     }
 }

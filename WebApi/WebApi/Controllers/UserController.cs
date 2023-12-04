@@ -27,9 +27,9 @@ namespace WebApi.Controllers
 
             if (response.Status == Domain.Enum.RequestStatus.Success)
             {
-                response.Value.SecretToken = await jWTService.GetToken(response.Value);
+                string token = await jWTService.GetToken(response.Value);
 
-                return new JsonResult(response.Value);
+                return new JsonResult(token);
             }
             else if (response.Description == "Неверный пароль")
             {
@@ -48,19 +48,13 @@ namespace WebApi.Controllers
             var response = await userService.Register(model);
 
             if (response.Status == Domain.Enum.RequestStatus.Success)
-                return new JsonResult(response.Value);
+            {
+                string token = await jWTService.GetToken(response.Value);
+
+                return new JsonResult(token);
+            }
 
             return BadRequest(new { response.Description });
-        }
-
-        [Authorize]
-        [Route("UpdateToken")]
-        [HttpPut]
-        public async Task<IActionResult> Update(string secretToken)
-        {
-            var response = await userService.UpdateToken(secretToken);
-
-            return Ok(new { response.Value });
         }
 
         [Route("BlockAccount")]
