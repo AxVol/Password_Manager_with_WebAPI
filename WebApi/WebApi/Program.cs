@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using WebApi.DAL;
@@ -49,7 +48,8 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlServer(config.GetConnectionString("SqlServerConnection"));
+    options.UseSqlServer(config.GetConnectionString("DefaultConnection"));
+    options.EnableSensitiveDataLogging();
 });
 
 var app = builder.Build();

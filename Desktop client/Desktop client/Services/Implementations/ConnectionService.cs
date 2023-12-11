@@ -13,7 +13,7 @@ namespace Desktop_client.Services.Implementations
         private readonly IPasswordService passwordService;
         private readonly IUserManager userManager;
         private readonly int countToBan = 3;
-        private readonly string url = "https://localhost:7125/api/User";
+        private readonly string url = "https://localhost:32769/api/User";
 
         private int tryedToLogin = 0;
 

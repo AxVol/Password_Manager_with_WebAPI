@@ -62,7 +62,6 @@ namespace WebApi.Tests.Mock
                     Login = "login1",
                     Email = "login1@mail.ru",
                     Password = "DB4C19D4EAA91BA92392484C439CBC1365BE17C57397641ABBEE9E9AEB35E579BACA35B6514CC3B9016D5AE0C75AC259E374A7B4C52E409D718AF1AF91ED01CE", //login1
-                    SecretToken = "ZGUwNTAyZDItZmFjZC00N2M3LWFkZTQtOTYyMWQ1NTFlMzk4"
                 },
                 new User()
                 {
@@ -70,7 +69,6 @@ namespace WebApi.Tests.Mock
                     Login = "login2",
                     Email = "login2@mail.ru",
                     Password = "F6B7985E8CDFBC2DDB597051437DD0E4421AD3386AA9629F961EDF127E2249681F6379CBFDCC7DD92031ED5A029B7CCF30720D1C0D88229D4DFC360E38C3777F", //login2
-                    SecretToken = "NGJkM2JlMDQtMzQ4MC00YWJlLTg0ZjgtZjhjOTRkNDgzMzQ5"
                 },
                 new User()
                 {
@@ -78,7 +76,6 @@ namespace WebApi.Tests.Mock
                     Login = "login3",
                     Email = "login3@mail.ru",
                     Password = "8D463DBAB5A43E40D1D8213D01595413950917C46728AA9419E3FAC3DF1B74425BF03D2EEB7463A29A08EF8D77087834BA70F6ADEB6C3724DE8414D542C18CB1", //login3
-                    SecretToken = "ZDI0NmNiMDAtZTdhMi00ODYwLWI4YWQtYTc0YjU0NzIyMzQ4"
                 }
             };
 

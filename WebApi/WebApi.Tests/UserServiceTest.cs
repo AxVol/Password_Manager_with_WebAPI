@@ -171,18 +171,5 @@ namespace WebApi.Tests
             // Assert
             Assert.Equal(Domain.Enum.RequestStatus.Exists, response.Status);
         }
-
-        [Fact]
-        public async void Update_token_test()
-        {
-            // Arrage
-            string token = "ZGUwNTAyZDItZmFjZC00N2M3LWFkZTQtOTYyMWQ1NTFlMzk4";
-
-            // Act
-            var response = await userService.UpdateToken(token);
-
-            // Assert
-            Assert.Equal(Domain.Enum.RequestStatus.Success, response.Status);
-        }
     }
 }

@@ -1,0 +1,33 @@
+version: "3,9"
+
+services:
+  sqlserver:
+    container_name: mssqlserver
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - "1433:1433"
+    environment:
+      SA_PASSWORD: "OpoAxVol!69"
+      ACCEPT_EULA: "Y"
+    volumes:
+      - sqldata:/var/lib/sqlserver/data
+  app:
+    container_name: webapi
+    build:
+      context: .
+      dockerfile: WebApi/Dockerfile
+    ports:
+      - "32773:80"
+      - "32769:7125"
+      - "32772:433" 
+    environment:
+        - Kestrel__Certificates__Default__Path=/Https/WebApi.pfx
+        - Kestrel__Certificates__Default__Password=OpoAxVol!69
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_URLS=https://+:7125;http://+:80
+    volumes:
+      - ~/ASP.NET/Https:/Https:ro
+    depends_on:
+      - sqlserver 
+volumes:
+  sqldata:

@@ -13,7 +13,7 @@ namespace Desktop_client.Services.Implementations
     public class PasswordService : IPasswordService
     {
         private readonly HttpClient httpClient;
-        private readonly string url = "https://localhost:7125/api/Passwords";
+        private readonly string url = "https://localhost:32769/api/Passwords";
         private readonly char[] specSymbols = new char[] { '?', '!', '@', '#', '$', '%', '&' };
         private readonly int lenChar = 9;
         private readonly int countSpecSymbols = 2;
