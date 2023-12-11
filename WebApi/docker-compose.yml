@@ -7,7 +7,7 @@ services:
     ports:
       - "1433:1433"
     environment:
-      SA_PASSWORD: "OpoAxVol!69"
+      SA_PASSWORD: "Strong!P@ssword"
       ACCEPT_EULA: "Y"
     volumes:
       - sqldata:/var/lib/sqlserver/data
@@ -22,7 +22,7 @@ services:
       - "32772:433" 
     environment:
         - Kestrel__Certificates__Default__Path=/Https/WebApi.pfx
-        - Kestrel__Certificates__Default__Password=OpoAxVol!69
+        - Kestrel__Certificates__Default__Password=Strong!P@ssword
         - ASPNETCORE_ENVIRONMENT=Development
         - ASPNETCORE_URLS=https://+:7125;http://+:80
     volumes:
