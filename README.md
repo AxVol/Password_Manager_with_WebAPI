@@ -5,10 +5,11 @@ ___
 ![.NET](https://img.shields.io/badge/-.NET_7-000278?style=for-the-badge&logo=.NET)
 ![NET](https://img.shields.io/badge/-ASP.NET_CORE-000278?style=for-the-badge&logo=.NET)
 ![MSSQLSERVER](https://img.shields.io/badge/-MS_SQL_SERVER-000278?style=for-the-badge&logo=microsoft-sql-server)
+![DOCKER](https://img.shields.io/badge/-DOCKER-000278?style=for-the-badge&logo=docker)
 ![.NET](https://img.shields.io/badge/-WPF-000278?style=for-the-badge&logo=.NET)
 ___
 ## Краткое описание проекта
-Парольный менеджер который существует в виде wpf клиента который общается с API на asp.net core, на стороне клиента пользователь может хранить свои пароли с логинами(создавать, обновлять, удалять их), для входа в клиент надо зарегистрироваться/авторизоваться, после чего данные отправляются на сервер(!ВАЖНО, никакие данные не храняться на устройстве клиента), где шифруются и помещаются в базу данных 
+Проект состоящий из облачного сервиса с хранением паролей в виде API и десктоп клиента который с ней общается, исключительно по https и внедренных JWT-токенов из-за специфики передаваемых данных, все шифрования и перемещения происходят на стороне API, а не клиента
 ___
 ### Подробные README
 [Web Api](WebApi/README.md)

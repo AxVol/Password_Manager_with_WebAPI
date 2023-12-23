@@ -21,12 +21,12 @@ services:
       - "32769:7125"
       - "32772:433" 
     environment:
-        - Kestrel__Certificates__Default__Path=/Https/WebApi.pfx
+        - Kestrel__Certificates__Default__Path=/root/.aspnet/https/WebApi.pfx
         - Kestrel__Certificates__Default__Password=Strong!P@ssword
         - ASPNETCORE_ENVIRONMENT=Development
         - ASPNETCORE_URLS=https://+:7125;http://+:80
     volumes:
-      - ~/ASP.NET/Https:/Https:ro
+      - ~/ASP.NET/Https:/root/.aspnet/https:ro
     depends_on:
       - sqlserver 
 volumes:
