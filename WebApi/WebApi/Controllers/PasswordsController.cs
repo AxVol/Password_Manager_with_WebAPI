@@ -65,7 +65,7 @@ namespace WebApi.Controllers
         /// <response code="400">Не валидные данные</response>
         [Route("CreatePass")]
         [HttpPost]
-        [ProducesResponseType(typeof(PasswordResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Create(PasswordViewModel model)
         {
@@ -98,7 +98,7 @@ namespace WebApi.Controllers
         /// <response code="400">Не валидные данные</response>
         [Route("UpdatePass")]
         [HttpPut]
-        [ProducesResponseType(typeof(PasswordResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Update(PasswordViewModel model)
         {
@@ -131,7 +131,7 @@ namespace WebApi.Controllers
         /// <response code="400">Не валидные данные</response>
         [Route("DeletePass")]
         [HttpDelete]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Delete(PasswordViewModel model)
         {

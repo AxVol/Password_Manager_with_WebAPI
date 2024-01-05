@@ -104,6 +104,7 @@ namespace WebApi.Controllers
         /// <response code="200">Подтверждение успешной блокировки</response>
         [Route("BlockAccount")]
         [HttpPost]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> BlockAccount(BlockUserViewModel block)
         {
             await userService.BlockAccount(block.Id);
