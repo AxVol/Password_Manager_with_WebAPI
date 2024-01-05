@@ -76,7 +76,7 @@ namespace WebApi.Controllers
             if (response.Status == Domain.Enum.RequestStatus.Failed)
                 return BadRequest(new { response.Description });
 
-            return new JsonResult(response.Value);
+            return Ok();
         }
 
         /// <remarks>
@@ -109,7 +109,7 @@ namespace WebApi.Controllers
             if (response.Status == Domain.Enum.RequestStatus.Failed)
                 return BadRequest(new { response.Description });
 
-            return new JsonResult(response.Value);
+            return Ok();
         }
 
         /// <remarks>
@@ -138,8 +138,11 @@ namespace WebApi.Controllers
             string token = Request.Headers.Authorization!;
             token = token.Split(' ')[1];
             var response = await passwordService.Delete(model, token);
+            
+            if (response.Status == Domain.Enum.RequestStatus.Failed)
+                return BadRequest(new { response.Description });
 
-            return new JsonResult(response.Description);
+            return Ok();
         }
     }
 }
