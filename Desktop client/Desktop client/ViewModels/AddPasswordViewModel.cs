@@ -1,4 +1,5 @@
-﻿using Desktop_client.Models;
+﻿using System;
+using Desktop_client.Models;
 using Desktop_client.Services;
 using Desktop_client.Services.Interfaces;
 using Desktop_client.Views;
@@ -28,6 +29,8 @@ namespace Desktop_client.ViewModels
         private string title = "Добавление пароля";
         [ObservableProperty]
         private string buttonText = "Добавить пароль";
+        [ObservableProperty]
+        private string? errorMessage;
 
         public BitmapSource HiddenImage
         {
@@ -95,8 +98,10 @@ namespace Desktop_client.ViewModels
         [RelayCommand]
         private async Task SendPassword(object data)
         {
+            string status;
             IsEnabled = false;
             Password passWord = new Password();
+            errorMessage = null;
 
             if (pageService.Password != null)
                 passWord.Id = pageService.Password.Id;
@@ -115,18 +120,31 @@ namespace Desktop_client.ViewModels
             switch (pageService.PasswordPageStatus)
             {
                 case "Add":
-                    await passwordService.Create(password, userManager.Token);
-                    userManager.AddPassword(passWord);
+                    status = await passwordService.Create(password, userManager.Token);
 
+                    if (status != "")
+                    {
+                        errorMessage = status;
+                        break;
+                    }
+
+                    userManager.AddPassword(passWord);
                     break;
                 case "Update":
-                    await passwordService.Update(password, userManager.Token);
+                    status = await passwordService.Update(password, userManager.Token);
+
+                    if (status != "")
+                    {
+                        errorMessage = status;
+                        break;
+                    }
+
                     userManager.UpdatePassword(passWord);
-                    
                     break;
             }
 
-            pageService.ChangePage(new PasswordsPage());
+            if (errorMessage != null)
+                pageService.ChangePage(new PasswordsPage());
         }
     }
 }

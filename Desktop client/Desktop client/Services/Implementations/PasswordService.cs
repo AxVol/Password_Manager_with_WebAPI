@@ -23,8 +23,9 @@ namespace Desktop_client.Services.Implementations
             httpClient = httpFactory.CreateClient();
         }
 
-        public async Task Create(PasswordSendModel model, string token)
+        public async Task<string> Create(PasswordSendModel model, string token)
         {
+            string status = "";
             JsonContent json = JsonContent.Create(model);
             HttpRequestMessage request = new HttpRequestMessage()
             {
@@ -34,11 +35,22 @@ namespace Desktop_client.Services.Implementations
                 Headers = { Authorization = new AuthenticationHeaderValue("Bearer", token) }
             };
 
-            await httpClient.SendAsync(request);
+            var response = await httpClient.SendAsync(request);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                Error error = await response.Content.ReadFromJsonAsync<Error>();
+                status = error.Description;
+
+                return status;
+            }
+                
+            return status;
         }
 
-        public async Task Delete(PasswordSendModel model, string token)
+        public async Task<string> Delete(PasswordSendModel model, string token)
         {
+            string status = "";
             JsonContent json = JsonContent.Create(model);
             HttpRequestMessage request = new HttpRequestMessage()
             {
@@ -48,7 +60,17 @@ namespace Desktop_client.Services.Implementations
                 Headers = { Authorization = new AuthenticationHeaderValue("Bearer", token) }
             };
 
-            await httpClient.SendAsync(request);
+            var response = await httpClient.SendAsync(request);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                Error error = await response.Content.ReadFromJsonAsync<Error>();
+                status = error.Description;
+
+                return status;
+            }
+
+            return status;
         }
 
         public async Task<string> GenerateStrongPassword()
@@ -96,8 +118,9 @@ namespace Desktop_client.Services.Implementations
             return passwords;
         }
 
-        public async Task Update(PasswordSendModel model, string token)
+        public async Task<string> Update(PasswordSendModel model, string token)
         {
+            string status = "";
             JsonContent json = JsonContent.Create(model);
             HttpRequestMessage request = new HttpRequestMessage()
             {
@@ -107,7 +130,17 @@ namespace Desktop_client.Services.Implementations
                 Headers = { Authorization = new AuthenticationHeaderValue("Bearer", token) }
             };
 
-            await httpClient.SendAsync(request);
+            var response = await httpClient.SendAsync(request);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                Error error = await response.Content.ReadFromJsonAsync<Error>();
+                status = error.Description;
+
+                return status;
+            }
+
+            return status;
         }
     }
 }

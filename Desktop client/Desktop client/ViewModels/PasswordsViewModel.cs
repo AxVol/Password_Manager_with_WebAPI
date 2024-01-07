@@ -24,6 +24,10 @@ namespace Desktop_client.ViewModels
         private bool isEnabled = true;
         [ObservableProperty]
         private bool popupIsOpen = false;
+        [ObservableProperty]
+        private bool errorPopupIsOpen = false;
+        [ObservableProperty]
+        private string? errorMessage;
 
         public PasswordsViewModel(IPageService page, IUserManager manager, IPasswordService password) 
         {
@@ -64,6 +68,27 @@ namespace Desktop_client.ViewModels
 
                 if (PopupIsOpen)
                     PopupIsOpen = false;
+            };
+
+            timer.Start();
+        }
+
+        [RelayCommand]
+        private void ShowErrorPopup()
+        {
+            ErrorPopupIsOpen = true;
+
+            DispatcherTimer timer = new DispatcherTimer()
+            {
+                Interval = TimeSpan.FromSeconds(20)
+            };
+
+            timer.Tick += delegate (object? sender, EventArgs e)
+            {
+                ((DispatcherTimer)timer).Stop();
+
+                if (PopupIsOpen)
+                    ErrorPopupIsOpen = false;
             };
 
             timer.Start();
@@ -113,10 +138,20 @@ namespace Desktop_client.ViewModels
                 Service = password.Service,
             };
 
-            await passwordService.Delete(sendModel, userManager.Token);
-            userManager.RemovePassword(password);
+            string status = await passwordService.Delete(sendModel, userManager.Token);
+            
+            if (status == "")
+            {
+                userManager.RemovePassword(password);
+                pageService.ChangePage(new PasswordsPage());
 
-            pageService.ChangePage(new PasswordsPage());
+                return;
+            }
+            else
+            {
+                ErrorMessage = status;
+                ShowErrorPopup();
+            }
         }
 
         [RelayCommand]
