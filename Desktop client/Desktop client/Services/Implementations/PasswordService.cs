@@ -6,7 +6,8 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Net.Http.Headers;
-using static System.Net.WebRequestMethods;
+using Desktop_client.Enums;
+using System.Linq;
 
 namespace Desktop_client.Services.Implementations
 {
@@ -141,6 +142,37 @@ namespace Desktop_client.Services.Implementations
             }
 
             return status;
+        }
+
+        public async Task<PasswordQuality> GetPasswordQuality(string password)
+        {
+            bool hasDigit = password.Any(c => char.IsDigit(c));
+            bool hasUpper = password.Any(c => char.IsUpper(c));
+            bool hasSpecSymbols = password.IndexOfAny(specSymbols) != -1;
+
+            if (password.Length < 8)
+            {
+                return PasswordQuality.Easy;
+            }
+            else
+            {
+                if (hasDigit && hasUpper && hasSpecSymbols)
+                {
+                    return PasswordQuality.Hard;
+                }
+                else if (hasDigit && hasUpper)
+                {
+                    return PasswordQuality.Medium;
+                }
+                else if (hasSpecSymbols)
+                {
+                    return PasswordQuality.Medium;
+                }
+                else
+                {
+                    return PasswordQuality.Easy;
+                }
+            }
         }
     }
 }

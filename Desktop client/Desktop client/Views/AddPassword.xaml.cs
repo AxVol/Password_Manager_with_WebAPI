@@ -32,6 +32,12 @@ namespace Desktop_client.Views
 
             PasswordBox.Password = viewModel.Password;
             viewModel.PasswordGeneratedEvent += PasswordGenerated;
+
+            if (viewModel.Title == "Изменение пароля")
+            {
+                PasswordBox.Password = viewModel.PasswordTemp;
+                viewModel.Password = viewModel.Password;
+            }
         }
 
         private void PasswordGenerated(string password)

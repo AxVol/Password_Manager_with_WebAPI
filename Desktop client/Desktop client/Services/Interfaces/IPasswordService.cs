@@ -1,5 +1,5 @@
-﻿using Desktop_client.Models;
-using System.Collections.Generic;
+﻿using Desktop_client.Enums;
+using Desktop_client.Models;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
@@ -12,5 +12,6 @@ namespace Desktop_client.Services.Interfaces
         public Task<string> Update(PasswordSendModel model, string token);
         public Task<string> Create(PasswordSendModel model, string token);
         public Task<string> GenerateStrongPassword();
+        public Task<PasswordQuality> GetPasswordQuality(string password);
     }
 }

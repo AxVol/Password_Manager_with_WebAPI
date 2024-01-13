@@ -79,6 +79,11 @@
                     <behavior:PasswordBehavior Password="{Binding Password, Mode=TwoWay}"/>
                 </i:Interaction.Behaviors>
             </PasswordBox>
+            <TextBlock 
+                Style="{StaticResource TextBlock}"
+                Margin="830,270,0,0"
+                Text="{Binding PasswordStatus}"
+                FontSize="24"/> 
             <PasswordBox
                 Margin="100,140,5,50"
                 Style="{StaticResource PasswordBox}">

@@ -1,11 +1,11 @@
 ﻿using Desktop_client.Services.Interfaces;
-using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using Desktop_client.Models;
 using Desktop_client.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Threading.Tasks;
+using Desktop_client.Enums;
 
 namespace Desktop_client.ViewModels
 {
@@ -13,6 +13,7 @@ namespace Desktop_client.ViewModels
     {
         private readonly IConnectionService connectionService;
         private readonly IPageService pageService;
+        private readonly IPasswordService passwordService;
 
         [ObservableProperty]
         private string? errorMessage;
@@ -21,11 +22,42 @@ namespace Desktop_client.ViewModels
         [ObservableProperty]
         private string? email;
         [ObservableProperty]
-        private string? password;
-        [ObservableProperty]
         private string? repeatPassword;
         [ObservableProperty]
         private bool enableButton = true;
+        [ObservableProperty]
+        private string? passwordStatus;
+
+        private string? password;
+        public string? Password
+        {
+            get
+            {
+                if (password is not null)
+                {
+                    PasswordQuality quality = passwordService.GetPasswordQuality(password).Result;
+
+                    switch (quality)
+                    {
+                        case PasswordQuality.Hard:
+                            PasswordStatus = "Сложный";
+                            break;
+                        case PasswordQuality.Medium:
+                            PasswordStatus = "Средний";
+                            break;
+                        case PasswordQuality.Easy:
+                            PasswordStatus = "Легкий";
+                            break;
+                    }
+                }
+
+                return password;
+            }
+            set
+            {
+                password = value;
+            }
+        }
 
         public RegisterViewModel(IConnectionService connection, IPageService page) 
         {
@@ -44,7 +76,7 @@ namespace Desktop_client.ViewModels
         {
             EnableButton = false;
 
-            if (CanRegister())
+            if (await CanRegister())
             {
                 RegistrationModel user = new RegistrationModel()
                 {
@@ -70,7 +102,7 @@ namespace Desktop_client.ViewModels
             return;
         }
 
-        private bool CanRegister()
+        private async Task<bool> CanRegister()
         {
             if (Login == null || Email == null || Password == null || RepeatPassword == null)
             {
@@ -78,11 +110,6 @@ namespace Desktop_client.ViewModels
 
                 return false;
             }
-
-            char[] specSymbols = new char[]
-            {
-                '?', '!', '@', '#', '$', '%', '&'
-            };
 
             EmailAddressAttribute emailValidate = new EmailAddressAttribute();
 
@@ -93,10 +120,7 @@ namespace Desktop_client.ViewModels
             {
                 if (Password == RepeatPassword)
                 {
-                    if ((Password.IndexOfAny(specSymbols) != -1)
-                        && (Password.Length > 8)
-                        && (Password.Any(c => char.IsDigit(c)))
-                        && (Password.Any(c => char.IsUpper(c))))
+                    if (await passwordService.GetPasswordQuality(Password) == PasswordQuality.Hard)
                     {
                         if (emailValidate.IsValid(Email))
                         {
