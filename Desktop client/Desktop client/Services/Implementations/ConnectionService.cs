@@ -102,6 +102,7 @@ namespace Desktop_client.Services.Implementations
             if (jwt != null)
             {
                 userManager.Token = jwt;
+                userManager.Passwords = await passwordService.GetAll(userManager.Token);
 
                 return "Успешно";
             }

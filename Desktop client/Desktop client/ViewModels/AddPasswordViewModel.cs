@@ -182,7 +182,7 @@ namespace Desktop_client.ViewModels
                         break;
                     }
 
-                    userManager.AddPassword(passWord);
+                    userManager.Passwords = await passwordService.GetAll(userManager.Token);
                     break;
                 case "Update":
                     status = await passwordService.Update(password, userManager.Token);

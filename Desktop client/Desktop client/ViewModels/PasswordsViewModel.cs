@@ -151,6 +151,7 @@ namespace Desktop_client.ViewModels
             {
                 ErrorMessage = status;
                 ShowErrorPopup();
+                IsEnabled = true;
             }
         }
 

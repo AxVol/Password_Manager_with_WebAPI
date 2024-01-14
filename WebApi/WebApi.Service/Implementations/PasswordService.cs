@@ -45,10 +45,7 @@ namespace WebApi.Service.Implementations
                 };
                 PasswordResponse passwordResponse = new PasswordResponse()
                 {
-                    Id = model.Id,
-                    Login = model.Login,
-                    Password = model.Password,
-                    Service = model.Service
+                    Id = model.Id
                 };
 
                 await passwordRepository.Create(password);
