@@ -59,10 +59,11 @@ namespace Desktop_client.ViewModels
             }
         }
 
-        public RegisterViewModel(IConnectionService connection, IPageService page) 
+        public RegisterViewModel(IConnectionService connection, IPageService page, IPasswordService pass) 
         {
             connectionService = connection;
             pageService = page;
+            passwordService = pass;
         }
 
         [RelayCommand]

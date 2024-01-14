@@ -148,6 +148,21 @@ namespace Desktop_client.ViewModels
             passWord.PassWord = Password;
             passWord.Service = Service;
             passWord.Login = Login;
+
+            if (userManager.Passwords is not null)
+            {
+                foreach (Password pass in userManager.Passwords)
+                {
+                    if (pass.PassWord == passWord.PassWord)
+                    {
+                        ErrorMessage = "Ошибка: Такой пароль уже есть в списке ваших паролей.\n В целях безопасности поставте другую комбинацию";
+                        IsEnabled = true;
+
+                        return;
+                    }
+                }
+            }
+
             PasswordSendModel password = new PasswordSendModel()
             {
                 Id = passWord.Id,
@@ -182,7 +197,7 @@ namespace Desktop_client.ViewModels
                     break;
             }
 
-            if (errorMessage != null)
+            if (errorMessage == null)
                 pageService.ChangePage(new PasswordsPage());
         }
     }
